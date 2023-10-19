@@ -4,3 +4,4 @@ dist
 *.txt
 *.csv
 .tox
+assets/*.xcf
