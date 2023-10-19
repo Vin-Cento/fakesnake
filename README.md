@@ -40,3 +40,9 @@ pip install fakesnake
 3. [Install](#install)
 4. [Authors](#authors)
 5. [FAQ](#faq)
+
+## TODO
+
+- [x] set length of password when generating
+- [ ] upload to database
+- [ ] define output type

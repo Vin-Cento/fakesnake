@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 import click
 
 from .creation import *
@@ -14,37 +12,39 @@ def cli():
 @click.argument("num", type=int)
 @click.option("--dist", type=float, default=1)
 def shape(num, dist):
-    create_shapes(num, dist)
+    print("\n".join(create_shapes(num, dist)))
 
 
 @click.command()
 @click.argument("num", type=int)
 def name(num):
-    create_names(num)
+    print("\n".join(create_names(num)))
 
 
 @click.command()
 @click.argument("num", type=int)
 def email(num):
-    create_emails(num)
+    print("\n".join(create_emails(num)))
 
 
 @click.command()
 @click.argument("num", type=int)
 def address(num):
-    create_addresses(num)
+    print("\n".join(create_addresses(num)))
 
 
 @click.command()
 @click.argument("num", type=int)
-def password(num):
-    create_passwords(num)
+@click.option("--min", type=int, default=15)
+@click.option("--max", type=int, default=25)
+def password(num, min, max):
+    print("\n".join(create_passwords(num, min, max)))
 
 
 @click.command()
 @click.argument("num", type=int)
 def number(num):
-    create_numbers(num)
+    print("\n".join(create_numbers(num)))
 
 
 cli.add_command(shape)
