@@ -24,39 +24,37 @@ def create_square(lat, lon, edge_length):
     return polygon
 
 
-def create_shapes(num, dist):
+def create_shapes(num, dist, header):
     fake = Faker()
     fake.add_provider(geo)
-    polygons = []
-
+    polygons = [header]
     for _ in tqdm(range(num)):
         # Generate random latitude and longitude
         lat, lon = fake.latlng()
         square_polygon = create_square(lat, lon, dist)
-        # polygons.append(square_polygon)
         polygons.append(square_polygon.__str__().replace("\n", ""))
     return polygons
 
 
-def create_names(num):
+def create_names(num, header):
     fake = Faker()
-    names = []
+    names = [header]
     for _ in tqdm(range(num)):
         names.append(fake.name())
     return names
 
 
-def create_emails(num):
+def create_emails(num, header):
     fake = Faker()
-    emails = []
+    emails = [header]
     for _ in tqdm(range(num)):
         emails.append(fake.email())
     return emails
 
 
-def create_addresses(num):
+def create_addresses(num, header):
     fake = Faker()
-    addresses = []
+    addresses = [header]
     for _ in tqdm(range(num)):
         street_address = fake.street_address()
         # Generate a random city
@@ -70,14 +68,14 @@ def create_addresses(num):
     return addresses
 
 
-def create_passwords(num, min, max):
+def create_passwords(num, min, max, header):
     assert min > 3, "min should be greater than 3"
     assert (
         max >= min
     ), "max should be greater than or equal to min, (default for max is 25)"
 
     fake = Faker()
-    passwords = []
+    passwords = [header]
 
     for _ in tqdm(range(num)):
         passwords.append(
@@ -88,8 +86,35 @@ def create_passwords(num, min, max):
     return passwords
 
 
-def create_numbers(num):
-    nums = []
+def create_numbers(num, header):
+    nums = [header]
     for i in tqdm(random.normal(0, 1, num)):
         nums.append(i)
     return nums
+
+
+def create_texts(num, header):
+    fake = Faker()
+    texts = [header]
+    for _ in tqdm(range(num)):
+        texts.append(fake.text(max_nb_chars=max))
+    return texts
+
+
+def inserts(filepath: str, table: str):
+    import pandas as pd
+
+    from sqlalchemy import create_engine, URL
+
+    pg_url = URL.create(
+        "postgresql+psycopg2",
+        username="user",
+        password="pass",
+        host="localhost",
+        port=5433,
+        database="db",
+    )
+    engine = create_engine(pg_url)
+
+    df = pd.read_csv(filepath)
+    df.to_sql(table, con=engine)

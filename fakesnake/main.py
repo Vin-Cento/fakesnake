@@ -11,40 +11,60 @@ def cli():
 @click.command()
 @click.argument("num", type=int)
 @click.option("--dist", type=float, default=1)
-def shape(num, dist):
-    print("\n".join(create_shapes(num, dist)))
+@click.option("--header", type=str, default="Shape")
+def shape(num, dist, header):
+    print("\n".join(create_shapes(num, dist, header)))
 
 
 @click.command()
 @click.argument("num", type=int)
-def name(num):
-    print("\n".join(create_names(num)))
+@click.option("--header", type=str, default="Name")
+def name(num, header):
+    print("\n".join(create_names(num, header)))
 
 
 @click.command()
 @click.argument("num", type=int)
-def email(num):
-    print("\n".join(create_emails(num)))
+@click.option("--header", type=str, default="Email")
+def email(num, header):
+    print("\n".join(create_emails(num, header)))
 
 
 @click.command()
 @click.argument("num", type=int)
-def address(num):
-    print("\n".join(create_addresses(num)))
+@click.option("--header", type=str, default="Address")
+def address(num, header):
+    print("\n".join(create_addresses(num, header)))
 
 
 @click.command()
 @click.argument("num", type=int)
 @click.option("--min", type=int, default=15)
 @click.option("--max", type=int, default=25)
-def password(num, min, max):
-    print("\n".join(create_passwords(num, min, max)))
+@click.option("--header", type=str, default="Password")
+def password(num, min, max, header):
+    print("\n".join(create_passwords(num, min, max, header)))
 
 
 @click.command()
 @click.argument("num", type=int)
-def number(num):
-    print("\n".join(create_numbers(num)))
+@click.option("--header", type=str, default="Number")
+def number(num, header):
+    print("\n".join(create_numbers(num, header)))
+
+
+@click.command()
+@click.argument("num", type=int)
+@click.option("--min", type=int, default=100)
+@click.option("--header", type=str, default="Text")
+def text(num, header):
+    print("\n".join(create_texts(num, header)))
+
+
+@click.command()
+@click.argument("input", type=click.Path(exists=True))
+def insert(input):
+    inserts(input)
 
 
 cli.add_command(shape)
@@ -53,6 +73,7 @@ cli.add_command(email)
 cli.add_command(address)
 cli.add_command(password)
 cli.add_command(number)
+cli.add_command(insert)
 
 
 def main():
