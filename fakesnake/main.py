@@ -63,8 +63,9 @@ def text(num, header):
 
 @click.command()
 @click.argument("input", type=click.Path(exists=True))
-def insert(input):
-    inserts(input)
+@click.argument("table", type=str)
+def insert(input, table):
+    inserts(input, table)
 
 
 cli.add_command(shape)

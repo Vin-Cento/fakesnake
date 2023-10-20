@@ -40,7 +40,7 @@ def create_names(num, header):
     fake = Faker()
     names = [header]
     for _ in tqdm(range(num)):
-        names.append(fake.name())
+        names.append(f"'{fake.name()}'")
     return names
 
 
@@ -48,7 +48,7 @@ def create_emails(num, header):
     fake = Faker()
     emails = [header]
     for _ in tqdm(range(num)):
-        emails.append(fake.email())
+        emails.append(f"'{fake.email()}'")
     return emails
 
 
@@ -64,7 +64,7 @@ def create_addresses(num, header):
         # Generate a random postal code
         postal_code = fake.postcode()
         # Combine the parts to create an address
-        addresses.append(f"{street_address}, {city}, {state} {postal_code}")
+        addresses.append(f"'{street_address}, {city}, {state}, {postal_code}'")
     return addresses
 
 
@@ -78,11 +78,7 @@ def create_passwords(num, min, max, header):
     passwords = [header]
 
     for _ in tqdm(range(num)):
-        passwords.append(
-            fake.password(
-                length=randint(min, max),
-            )
-        )
+        passwords.append(f"'{fake.password(length=randint(min, max),)}'")
     return passwords
 
 
@@ -97,7 +93,7 @@ def create_texts(num, header):
     fake = Faker()
     texts = [header]
     for _ in tqdm(range(num)):
-        texts.append(fake.text(max_nb_chars=max))
+        texts.append(f"'{fake.text(max_nb_chars=max)}'")
     return texts
 
 
@@ -116,5 +112,7 @@ def inserts(filepath: str, table: str):
     )
     engine = create_engine(pg_url)
 
-    df = pd.read_csv(filepath)
-    df.to_sql(table, con=engine)
+    df = pd.read_csv(filepath, delimiter=",", quotechar="'")
+    df.to_sql(table, con=engine, if_exists="append")
+    print(df)
+    print(f"upload to {'db'} {table}")
