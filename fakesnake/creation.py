@@ -6,6 +6,9 @@ from faker import Faker
 from faker.providers import geo
 
 from numpy import random
+from tqdm import tqdm
+
+from random import randint
 
 
 def create_square(lat, lon, edge_length):
@@ -26,29 +29,35 @@ def create_shapes(num, dist):
     fake.add_provider(geo)
     polygons = []
 
-    for _ in range(num):
+    for _ in tqdm(range(num)):
         # Generate random latitude and longitude
         lat, lon = fake.latlng()
         square_polygon = create_square(lat, lon, dist)
-        polygons.append(square_polygon)
-        print(square_polygon.__str__().replace("\n", ""))
+        # polygons.append(square_polygon)
+        polygons.append(square_polygon.__str__().replace("\n", ""))
+    return polygons
 
 
 def create_names(num):
     fake = Faker()
-    for _ in range(num):
-        print(fake.name())
+    names = []
+    for _ in tqdm(range(num)):
+        names.append(fake.name())
+    return names
 
 
 def create_emails(num):
     fake = Faker()
-    for _ in range(num):
-        print(fake.email())
+    emails = []
+    for _ in tqdm(range(num)):
+        emails.append(fake.email())
+    return emails
 
 
 def create_addresses(num):
     fake = Faker()
-    for _ in range(num):
+    addresses = []
+    for _ in tqdm(range(num)):
         street_address = fake.street_address()
         # Generate a random city
         city = fake.city()
@@ -57,19 +66,30 @@ def create_addresses(num):
         # Generate a random postal code
         postal_code = fake.postcode()
         # Combine the parts to create an address
-        print(f"{street_address}, {city}, {state} {postal_code}")
+        addresses.append(f"{street_address}, {city}, {state} {postal_code}")
+    return addresses
 
 
-def create_passwords(num):
+def create_passwords(num, min, max):
+    assert min > 3, "min should be greater than 3"
+    assert (
+        max >= min
+    ), "max should be greater than or equal to min, (default for max is 25)"
+
     fake = Faker()
-    for _ in range(num):
-        print(
+    passwords = []
+
+    for _ in tqdm(range(num)):
+        passwords.append(
             fake.password(
-                length=12,
+                length=randint(min, max),
             )
         )
+    return passwords
 
 
 def create_numbers(num):
-    for i in random.normal(0, 1, num):
-        print(i)
+    nums = []
+    for i in tqdm(random.normal(0, 1, num)):
+        nums.append(i)
+    return nums

@@ -8,11 +8,13 @@ numpy = "*"
 tox = "*"
 geopy = "*"
 shapely = "*"
+tqdm = "*"
 
 [dev-packages]
 neovim = "*"
 pytest = "*"
 twine = "*"
+fakesnake = {path = "./dist/fakesnake-0.0.1.tar.gz"}
 
 [requires]
 python_version = "3.11"
