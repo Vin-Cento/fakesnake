@@ -1,6 +1,6 @@
 import click
 
-from .creation import *
+from fakesnake.creation import *
 
 
 @click.group()
