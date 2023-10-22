@@ -1,6 +1,7 @@
 import click
 
 from fakesnake.creation import *
+import fakesnake.setting as setting
 
 
 @click.group()
@@ -62,6 +63,11 @@ def text(num, header):
 
 
 @click.command()
+def state():
+    setting.list()
+
+
+@click.command()
 @click.argument("input", type=click.Path(exists=True))
 @click.argument("table", type=str)
 def insert(input, table):
@@ -74,6 +80,7 @@ cli.add_command(email)
 cli.add_command(address)
 cli.add_command(password)
 cli.add_command(number)
+cli.add_command(state)
 cli.add_command(insert)
 
 

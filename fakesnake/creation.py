@@ -102,13 +102,16 @@ def inserts(filepath: str, table: str):
 
     from sqlalchemy import create_engine, URL
 
+    from fakesnake.setting import DB
+
+    print(DB["user"])
     pg_url = URL.create(
         "postgresql+psycopg2",
-        username="user",
-        password="pass",
-        host="localhost",
-        port=5433,
-        database="db",
+        username=DB["user"],
+        password=DB["pass"],
+        host=DB["host"],
+        port=DB["port"],
+        database=DB["name"],
     )
     engine = create_engine(pg_url)
 
