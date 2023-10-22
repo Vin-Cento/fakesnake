@@ -10,45 +10,45 @@ def cli():
 
 @click.command()
 @click.argument("num", type=int)
-@click.option("--dist", type=float, default=1)
-@click.option("--header", type=str, default="Shape")
+@click.option("--dist", "-d", type=float, default=1)
+@click.option("--header", "-h", type=str, default="Shape")
 def shape(num, dist, header):
     print("\n".join(create_shapes(num, dist, header)))
 
 
 @click.command()
 @click.argument("num", type=int)
-@click.option("--header", type=str, default="Name")
+@click.option("--header", "-h", type=str, default="Name")
 def name(num, header):
     print("\n".join(create_names(num, header)))
 
 
 @click.command()
 @click.argument("num", type=int)
-@click.option("--header", type=str, default="Email")
+@click.option("--header", "-h", type=str, default="Email")
 def email(num, header):
     print("\n".join(create_emails(num, header)))
 
 
 @click.command()
 @click.argument("num", type=int)
-@click.option("--header", type=str, default="Address")
+@click.option("--header", "-h", type=str, default="Address")
 def address(num, header):
     print("\n".join(create_addresses(num, header)))
 
 
 @click.command()
 @click.argument("num", type=int)
-@click.option("--min", type=int, default=15)
-@click.option("--max", type=int, default=25)
-@click.option("--header", type=str, default="Password")
+@click.option("--min", "-l", type=int, default=15)
+@click.option("--max", "-u", type=int, default=25)
+@click.option("--header", "-h", type=str, default="Password")
 def password(num, min, max, header):
     print("\n".join(create_passwords(num, min, max, header)))
 
 
 @click.command()
 @click.argument("num", type=int)
-@click.option("--header", type=str, default="Number")
+@click.option("--header", "-h", type=str, default="Number")
 def number(num, header):
     print("\n".join(create_numbers(num, header)))
 
@@ -56,7 +56,7 @@ def number(num, header):
 @click.command()
 @click.argument("num", type=int)
 @click.option("--min", type=int, default=100)
-@click.option("--header", type=str, default="Text")
+@click.option("--header", "-h", type=str, default="Text")
 def text(num, header):
     print("\n".join(create_texts(num, header)))
 
