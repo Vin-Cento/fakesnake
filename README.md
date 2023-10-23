@@ -8,19 +8,19 @@
 
 ```bash
 fakes --help
-
-#    Usage: fakes [OPTIONS] COMMAND [ARGS]...
-#
-#    Options:
-#      --help  Show this message and exit.
-#
-#    Commands:
-#      address
-#      email
-#      name
-#      number
-#      password
 ```
+
+    Usage: fakes [OPTIONS] COMMAND [ARGS]...
+
+    Options:
+      --help  Show this message and exit.
+
+    Commands:
+      address
+      email
+      name
+      number
+      password
 
 ## Install
 
