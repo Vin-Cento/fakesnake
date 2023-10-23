@@ -1,26 +1,26 @@
-![FakeSnake_Logo](assets/banner.png)
+![FakeSnake_Logo](https://raw.githubusercontent.com/Vin-Cento/fakesnake/master/assets/banner.png)
 
 [Go to table of contents](#table-of-contents)
 
 ## Usages
 
-![fakesnake_demo_gif](assets/fakesnake_demo.gif)
+![fakesnake_demo_gif](https://raw.githubusercontent.com/Vin-Cento/fakesnake/master/assets/fakesnake_demo.gif)
 
 ```bash
 fakes --help
-
-#    Usage: fakes [OPTIONS] COMMAND [ARGS]...
-#
-#    Options:
-#      --help  Show this message and exit.
-#
-#    Commands:
-#      address
-#      email
-#      name
-#      number
-#      password
 ```
+
+    Usage: fakes [OPTIONS] COMMAND [ARGS]...
+
+    Options:
+      --help  Show this message and exit.
+
+    Commands:
+      address
+      email
+      name
+      number
+      password
 
 ## Install
 
