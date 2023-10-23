@@ -1,11 +1,11 @@
 from os import getcwd, listdir, environ
 
 global DB
+from dotenv import load_dotenv
+
+DB = dict()
+
 if ".env" in listdir(getcwd()):
-    from dotenv import load_dotenv
-
-    DB = dict()
-
     load_dotenv(f"{getcwd()}/.env")
 
     # Access the variables
@@ -15,7 +15,11 @@ if ".env" in listdir(getcwd()):
     DB["pass"] = environ.get("DB_PASS")
     DB["user"] = environ.get("DB_USER")
 else:
-    raise FileNotFoundError(f".env not found")
+    DB["port"] = "5432"
+    DB["name"] = "postgres"
+    DB["host"] = "localhost"
+    DB["pass"] = ""
+    DB["user"] = "postgres"
 
 
 def list():

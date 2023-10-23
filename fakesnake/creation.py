@@ -97,21 +97,18 @@ def create_texts(num, header):
     return texts
 
 
-def inserts(filepath: str, table: str):
+def inserts(filepath: str, table: str, db_setting):
     import pandas as pd
 
     from sqlalchemy import create_engine, URL
 
-    from fakesnake.setting import DB
-
-    print(DB["user"])
     pg_url = URL.create(
         "postgresql+psycopg2",
-        username=DB["user"],
-        password=DB["pass"],
-        host=DB["host"],
-        port=DB["port"],
-        database=DB["name"],
+        username=db_setting["user"],
+        password=db_setting["pass"],
+        host=db_setting["host"],
+        port=db_setting["port"],
+        database=db_setting["name"],
     )
     engine = create_engine(pg_url)
 

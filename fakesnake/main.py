@@ -63,15 +63,41 @@ def text(num, header):
 
 
 @click.command()
-def state():
+def config():
     setting.list()
 
 
 @click.command()
 @click.argument("input", type=click.Path(exists=True))
 @click.argument("table", type=str)
-def insert(input, table):
-    inserts(input, table)
+@click.option("--user", "-u", type=str, default="")
+@click.option("--database_name", "-d", type=str, default="")
+@click.option("--host", "-h", type=str, default="")
+@click.option("--port", "-p", type=str, default="")
+@click.option("--password", "-P", type=str, default="")
+def insert(input, table, user, database_name, host, port, password):
+    from fakesnake.setting import DB
+
+    db_setting = {
+        "port": DB["port"],
+        "name": DB["name"],
+        "host": DB["host"],
+        "pass": DB["pass"],
+        "user": DB["user"],
+    }
+
+    custom_setting = {
+        "user": user,
+        "name": database_name,
+        "host": host,
+        "port": port,
+        "pass": password,
+    }
+    for k in custom_setting:
+        if custom_setting[k] != "":
+            db_setting[k] = custom_setting[k]
+
+    inserts(input, table, db_setting)
 
 
 cli.add_command(shape)
@@ -80,7 +106,7 @@ cli.add_command(email)
 cli.add_command(address)
 cli.add_command(password)
 cli.add_command(number)
-cli.add_command(state)
+cli.add_command(config)
 cli.add_command(insert)
 
 
