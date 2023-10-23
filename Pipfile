@@ -9,6 +9,10 @@ tox = "*"
 geopy = "*"
 shapely = "*"
 tqdm = "*"
+pandas = "*"
+sqlalchemy = "*"
+psycopg2 = "*"
+python-dotenv = "*"
 
 [dev-packages]
 neovim = "*"
