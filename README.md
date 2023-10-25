@@ -43,5 +43,7 @@ pip install fakesnake
 
 ## TODO
 
+- [ ] set default 10
+- [ ] init a .env file
 - [x] set length of password when generating
 - [x] upload to database
