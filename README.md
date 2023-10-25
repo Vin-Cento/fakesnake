@@ -4,7 +4,7 @@
 
 ### Generate Fake Data
 
-![generate demo](assets/generate_demo.gif)
+![generate demo](https://raw.githubusercontent.com/Vin-Cento/fakesnake/master/assets/generate_demo.gif)
 
 ```bash
 fakes --help
@@ -28,7 +28,7 @@ fakes --help
 
 ### Insert Data to DB
 
-![insert demo](assets/insert_demo.gif)
+![insert demo](https://raw.githubusercontent.com/Vin-Cento/fakesnake/master/assets/insert_demo.gif)
 
 ## Install
 
