@@ -10,7 +10,7 @@ def cli():
 
 
 @click.command()
-@click.argument("num", type=int)
+@click.option("--num", "-n", type=int, default=10)
 @click.option("--dist", "-d", type=float, default=1)
 @click.option("--header", "-h", type=str, default="Shape")
 def shape(num, dist, header):
@@ -18,28 +18,28 @@ def shape(num, dist, header):
 
 
 @click.command()
-@click.argument("num", type=int)
+@click.option("--num", "-n", type=int, default=10)
 @click.option("--header", "-h", type=str, default="Name")
 def name(num, header):
     print("\n".join(create_names(num, header)))
 
 
 @click.command()
-@click.argument("num", type=int)
+@click.option("--num", "-n", type=int, default=10)
 @click.option("--header", "-h", type=str, default="Email")
 def email(num, header):
     print("\n".join(create_emails(num, header)))
 
 
 @click.command()
-@click.argument("num", type=int)
+@click.option("--num", "-n", type=int, default=10)
 @click.option("--header", "-h", type=str, default="Address")
 def address(num, header):
     print("\n".join(create_addresses(num, header)))
 
 
 @click.command()
-@click.argument("num", type=int)
+@click.option("--num", "-n", type=int, default=10)
 @click.option("--min", "-l", type=int, default=15)
 @click.option("--max", "-u", type=int, default=25)
 @click.option("--header", "-h", type=str, default="Password")
@@ -48,14 +48,14 @@ def password(num, min, max, header):
 
 
 @click.command()
-@click.argument("num", type=int)
+@click.option("--num", "-n", type=int, default=10)
 @click.option("--header", "-h", type=str, default="Number")
 def number(num, header):
     print("\n".join(create_numbers(num, header)))
 
 
 @click.command()
-@click.argument("num", type=int)
+@click.option("--num", "-n", type=int, default=10)
 @click.option("--min", type=int, default=100)
 @click.option("--header", "-h", type=str, default="Text")
 def text(num, header):
@@ -65,6 +65,11 @@ def text(num, header):
 @click.command()
 def config():
     setting.list()
+
+
+@click.command()
+def init():
+    setting.init()
 
 
 @click.command()
@@ -108,6 +113,7 @@ cli.add_command(password)
 cli.add_command(number)
 cli.add_command(config)
 cli.add_command(insert)
+cli.add_command(init)
 
 
 def main():

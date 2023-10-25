@@ -4,7 +4,7 @@
 
 ### Generate Fake Data
 
-![generate demo](assets/generate_demo.gif)
+![generate demo](https://raw.githubusercontent.com/Vin-Cento/fakesnake/master/assets/generate_demo.gif)
 
 ```bash
 fakes --help
@@ -19,6 +19,7 @@ fakes --help
       address
       config
       email
+      init
       insert
       name
       number
@@ -27,7 +28,7 @@ fakes --help
 
 ### Insert Data to DB
 
-![insert demo](assets/insert_demo.gif)
+![insert demo](https://raw.githubusercontent.com/Vin-Cento/fakesnake/master/assets/insert_demo.gif)
 
 ## Install
 
@@ -40,10 +41,3 @@ pip install fakesnake
 1.  Q: Where to report problems?
 
     A: Open up an [issue](https://github.com/Vin-Cento/fakesnake/issues/new)
-
-## TODO
-
-- [ ] set default 10
-- [ ] init a .env file
-- [x] set length of password when generating
-- [x] upload to database
