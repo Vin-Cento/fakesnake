@@ -112,7 +112,8 @@ def inserts(filepath: str, table: str, db_setting):
     )
     engine = create_engine(pg_url)
 
-    df = pd.read_csv(filepath, delimiter=",", quotechar="'")
-    df.to_sql(table, con=engine, if_exists="append")
-    print(df)
-    print(f"upload to {'db'} {table}")
+    for df in pd.read_csv(filepath, delimiter=",", quotechar="'", chunksize=100_000):
+        # df = pd.read_csv(filepath, delimiter=",", quotechar="'")
+        df.to_sql(table, con=engine, if_exists="append", index=False)
+
+    print(f"upload to {table}")

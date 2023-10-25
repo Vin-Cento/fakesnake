@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "71999d22c0b91a709b22701da15336e930b234f06e11dcf96073f61e60766ca5"
+            "sha256": "c5444b20fee5de18ab31c624a3e5792fe051c9a1ca68f1dc22dc0bf650ce799c"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -32,6 +32,14 @@
             "markers": "python_version >= '3.7'",
             "version": "==5.2.0"
         },
+        "click": {
+            "hashes": [
+                "sha256:ae74fb96c20a0277a1d615f1e4d73c8414f5a98db8b799a7931d1582f3390c28",
+                "sha256:ca9853ad459e787e2192211578cc907e7594e294c7ccc834310722b41b9ca6de"
+            ],
+            "markers": "python_version >= '3.7'",
+            "version": "==8.1.7"
+        },
         "colorama": {
             "hashes": [
                 "sha256:08695f5cb7ed6e0531a20572697297273c47b8cae5a63ffc6d6ed5c201be6e44",
@@ -46,6 +54,22 @@
                 "sha256:9dafe54b34a028eafd95039d5e5d4851a13734540f1331060d31c9916e7147a8"
             ],
             "version": "==0.3.7"
+        },
+        "faker": {
+            "hashes": [
+                "sha256:a62a3fd3bfa3122d4f57dfa26a1cc37d76751a76c8ddd63cf9d24078c57913a4",
+                "sha256:e28090068293c5a83e7f4d636417d45fae1031ca8a8136cc2415549ebc2111e2"
+            ],
+            "markers": "python_version >= '3.8'",
+            "version": "==19.11.0"
+        },
+        "fakesnake": {
+            "hashes": [
+                "sha256:8209898163493f5848a9c8db7c8b833f3db4c647797668552652541e99abd610",
+                "sha256:ea0b1b916f0c76dab83f65f935549ccc41ef53ca63434fbb3b57bd71d8faf6e5"
+            ],
+            "index": "pypi",
+            "version": "==0.0.3"
         },
         "filelock": {
             "hashes": [
@@ -649,10 +673,11 @@
         },
         "fakesnake": {
             "hashes": [
-                "sha256:9a543869b96b6c71d7d2b295a9f3102ff05561655198d6cd5484f3e50ee48e86"
+                "sha256:8209898163493f5848a9c8db7c8b833f3db4c647797668552652541e99abd610",
+                "sha256:ea0b1b916f0c76dab83f65f935549ccc41ef53ca63434fbb3b57bd71d8faf6e5"
             ],
-            "path": "./dist/fakesnake-0.0.1.tar.gz",
-            "version": "==0.0.1"
+            "index": "pypi",
+            "version": "==0.0.3"
         },
         "geographiclib": {
             "hashes": [

@@ -13,6 +13,7 @@ pandas = "*"
 sqlalchemy = "*"
 psycopg2 = "*"
 python-dotenv = "*"
+fakesnake = "*"
 
 [dev-packages]
 neovim = "*"
