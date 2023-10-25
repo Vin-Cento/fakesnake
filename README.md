@@ -19,6 +19,7 @@ fakes --help
       address
       config
       email
+      init
       insert
       name
       number
@@ -40,10 +41,3 @@ pip install fakesnake
 1.  Q: Where to report problems?
 
     A: Open up an [issue](https://github.com/Vin-Cento/fakesnake/issues/new)
-
-## TODO
-
-- [ ] set default 10
-- [ ] init a .env file
-- [x] set length of password when generating
-- [x] upload to database

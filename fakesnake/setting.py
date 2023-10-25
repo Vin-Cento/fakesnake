@@ -25,3 +25,21 @@ else:
 def list():
     for key in DB:
         print(DB[key])
+
+
+def init():
+    if ".env" in listdir():
+        print(".env exist")
+    else:
+        with open(".env", "w") as file:
+            file.writelines(
+                [
+                    "DB_PORT=\n",
+                    "DB_NAME=\n",
+                    "DB_HOST=\n",
+                    "DB_PASS=\n",
+                    "DB_USER=\n",
+                    "DB_TYPE=\n",
+                ]
+            )
+        print(".env created")
