@@ -89,7 +89,7 @@ def create_numbers(num, header):
     return nums
 
 
-def create_texts(num, header):
+def create_texts(num, max, header):
     fake = Faker()
     texts = [header]
     for _ in tqdm(range(num)):

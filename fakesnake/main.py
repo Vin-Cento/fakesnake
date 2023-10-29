@@ -56,10 +56,10 @@ def number(num, header):
 
 @click.command()
 @click.option("--num", "-n", type=int, default=10)
-@click.option("--min", type=int, default=100)
+@click.option("--max", "-m", type=int, default=100)
 @click.option("--header", "-h", type=str, default="Text")
-def text(num, header):
-    print("\n".join(create_texts(num, header)))
+def text(num, max, header):
+    print("\n".join(create_texts(num, max, header)))
 
 
 @click.command()
@@ -114,6 +114,7 @@ cli.add_command(number)
 cli.add_command(config)
 cli.add_command(insert)
 cli.add_command(init)
+cli.add_command(text)
 
 
 def main():
