@@ -77,7 +77,7 @@ def init():
 @click.argument("table", type=str)
 @click.option("--quotechar", "-D", type=str, default='"')
 @click.option("--user", "-u", type=str, default="")
-@click.option("--database_name", "-d", type=str, default="")
+@click.option("--database_name", "-d", type=str, default="mydb")
 @click.option("--host", "-h", type=str, default="")
 @click.option("--port", "-p", type=str, default="")
 @click.option("--password", "-P", type=str, default="")

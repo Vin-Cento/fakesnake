@@ -109,15 +109,16 @@ def inserts(filepath: str, table: str, quotechar: str, db_setting):
 
     from sqlalchemy import create_engine, URL
 
-    pg_url = URL.create(
-        "postgresql+psycopg2",
-        username=db_setting["user"],
-        password=db_setting["pass"],
-        host=db_setting["host"],
-        port=db_setting["port"],
-        database=db_setting["name"],
-    )
-    engine = create_engine(pg_url)
+    # pg_url = URL.create(
+    #     "postgresql+psycopg2",
+    #     username=db_setting["user"],
+    #     password=db_setting["pass"],
+    #     host=db_setting["host"],
+    #     port=db_setting["port"],
+    #     database=db_setting["name"],
+    # )
+    # engine = create_engine(pg_url)
+    engine = create_engine(f'sqlite:///{db_setting["name"]}.db', echo=False)
 
     for df in pd.read_csv(
         filepath, delimiter=",", quotechar=quotechar, chunksize=100_000
