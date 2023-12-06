@@ -19,7 +19,7 @@ fakesnake = "*"
 neovim = "*"
 pytest = "*"
 twine = "*"
-fakesnake = {path = "./dist/fakesnake-0.0.1.tar.gz"}
+fakesnake = {file = "dist/fakesnake-0.0.4-py3-none-any.whl"}
 
 [requires]
 python_version = "3.11"

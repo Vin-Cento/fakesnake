@@ -97,7 +97,7 @@ def create_texts(num, max, header):
     return texts
 
 
-def inserts(filepath: str, table: str, db_setting):
+def inserts(filepath: str, table: str, quotechar: str, db_setting):
     import pandas as pd
 
     from sqlalchemy import create_engine, URL
@@ -112,7 +112,9 @@ def inserts(filepath: str, table: str, db_setting):
     )
     engine = create_engine(pg_url)
 
-    for df in pd.read_csv(filepath, delimiter=",", quotechar="'", chunksize=100_000):
+    for df in pd.read_csv(
+        filepath, delimiter=",", quotechar=quotechar, chunksize=100_000
+    ):
         # df = pd.read_csv(filepath, delimiter=",", quotechar="'")
         df.to_sql(table, con=engine, if_exists="append", index=False)
 
