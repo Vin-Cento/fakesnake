@@ -75,12 +75,13 @@ def init():
 @click.command()
 @click.argument("input", type=click.Path(exists=True))
 @click.argument("table", type=str)
+@click.option("--quotechar", "-D", type=str, default='"')
 @click.option("--user", "-u", type=str, default="")
 @click.option("--database_name", "-d", type=str, default="")
 @click.option("--host", "-h", type=str, default="")
 @click.option("--port", "-p", type=str, default="")
 @click.option("--password", "-P", type=str, default="")
-def insert(input, table, user, database_name, host, port, password):
+def insert(input, table, quotechar, user, database_name, host, port, password):
     from fakesnake.setting import DB
 
     db_setting = {
@@ -102,7 +103,7 @@ def insert(input, table, user, database_name, host, port, password):
         if custom_setting[k] != "":
             db_setting[k] = custom_setting[k]
 
-    inserts(input, table, db_setting)
+    inserts(input, table, quotechar, db_setting)
 
 
 cli.add_command(shape)
