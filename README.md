@@ -36,6 +36,22 @@ fakes --help
 pip install fakesnake
 ```
 
+## Postgres
+
+Need to have the psycopg2-binary to run connect to POSTGRES server. To install it you need install postgres-client and postgres-dev.
+
+```bash
+# alpine
+apk add postgres-client postgres-dev
+
+# ubuntu
+apt install postgres-client postgres-dev
+```
+
+```bash
+pip install psycopg2-binary
+```
+
 ## FAQ
 
 1.  Q: Where to report problems?
