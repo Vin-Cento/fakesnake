@@ -28,7 +28,8 @@ def create_shapes(num, dist, header):
     fake = Faker()
     fake.add_provider(geo)
     polygons = [header]
-    for _ in tqdm(range(num)):
+    d_bool = False if num > 5000 else True
+    for _ in tqdm(range(num), disable=d_bool):
         # Generate random latitude and longitude
         lat, lon = fake.latlng()
         square_polygon = create_square(lat, lon, dist)
@@ -39,7 +40,8 @@ def create_shapes(num, dist, header):
 def create_names(num, header):
     fake = Faker()
     names = [header]
-    for _ in tqdm(range(num)):
+    d_bool = False if num > 5000 else True
+    for _ in tqdm(range(num), disable=d_bool):
         names.append(f"'{fake.name()}'")
     return names
 
@@ -47,7 +49,8 @@ def create_names(num, header):
 def create_emails(num, header):
     fake = Faker()
     emails = [header]
-    for _ in tqdm(range(num)):
+    d_bool = False if num > 5000 else True
+    for _ in tqdm(range(num), disable=d_bool):
         emails.append(f"'{fake.email()}'")
     return emails
 
@@ -55,7 +58,8 @@ def create_emails(num, header):
 def create_addresses(num, header):
     fake = Faker()
     addresses = [header]
-    for _ in tqdm(range(num)):
+    d_bool = False if num > 5000 else True
+    for _ in tqdm(range(num), disable=d_bool):
         street_address = fake.street_address()
         # Generate a random city
         city = fake.city()
@@ -77,14 +81,16 @@ def create_passwords(num, min, max, header):
     fake = Faker()
     passwords = [header]
 
-    for _ in tqdm(range(num)):
+    d_bool = False if num > 5000 else True
+    for _ in tqdm(range(num), disable=d_bool):
         passwords.append(f"'{fake.password(length=randint(min, max),)}'")
     return passwords
 
 
 def create_numbers(num, header):
     nums = [header]
-    for i in tqdm(random.normal(0, 1, num)):
+    d_bool = False if num > 5000 else True
+    for i in tqdm(random.normal(0, 1, num), disable=d_bool):
         nums.append(i)
     return nums
 
@@ -92,7 +98,8 @@ def create_numbers(num, header):
 def create_texts(num, max, header):
     fake = Faker()
     texts = [header]
-    for _ in tqdm(range(num)):
+    d_bool = False if num > 5000 else True
+    for _ in tqdm(range(num), disable=d_bool):
         texts.append(f"'{fake.text(max_nb_chars=max)}'")
     return texts
 
@@ -102,15 +109,16 @@ def inserts(filepath: str, table: str, quotechar: str, db_setting):
 
     from sqlalchemy import create_engine, URL
 
-    pg_url = URL.create(
-        "postgresql+psycopg2",
-        username=db_setting["user"],
-        password=db_setting["pass"],
-        host=db_setting["host"],
-        port=db_setting["port"],
-        database=db_setting["name"],
-    )
-    engine = create_engine(pg_url)
+    # pg_url = URL.create(
+    #     "postgresql+psycopg2",
+    #     username=db_setting["user"],
+    #     password=db_setting["pass"],
+    #     host=db_setting["host"],
+    #     port=db_setting["port"],
+    #     database=db_setting["name"],
+    # )
+    # engine = create_engine(pg_url)
+    engine = create_engine(f'sqlite:///{db_setting["name"]}.db', echo=False)
 
     for df in pd.read_csv(
         filepath, delimiter=",", quotechar=quotechar, chunksize=100_000
