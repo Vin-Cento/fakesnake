@@ -121,7 +121,7 @@ def inserts(filepath: str, table: str, quotechar: str, db_setting):
     engine = create_engine(f'sqlite:///{db_setting["name"]}.db', echo=False)
 
     for df in pd.read_csv(
-        filepath, delimiter=",", quotechar=quotechar, chunksize=100_000
+        filepath, delimiter=",", quotechar=quotechar, chunksize=100_000, encoding="utf-8"
     ):
         # df = pd.read_csv(filepath, delimiter=",", quotechar="'")
         df.to_sql(table, con=engine, if_exists="append", index=False)
