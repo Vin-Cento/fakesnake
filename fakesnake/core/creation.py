@@ -6,6 +6,8 @@ from tqdm import tqdm
 
 from random import randint
 from typing import List
+from geojson import Feature, FeatureCollection, dumps
+from shapely.geometry import mapping
 
 from utils import create_square
 
@@ -21,6 +23,26 @@ def create_shapes(num, dist, header=None) -> List[str]:
         square_polygon = create_square(lat, lon, dist)
         polygons.append(square_polygon.__str__().replace("\n", ""))
     return polygons
+
+
+def create_geojson(num, dist) -> List[str]:
+    fake = Faker()
+    fake.add_provider(geo)
+    polygons = []
+    d_bool = False if num > 5000 else True
+    for _ in tqdm(range(num), disable=d_bool):
+        # Generate random latitude and longitude
+        lat, lon = fake.latlng()
+        square_polygon = create_square(lat, lon, dist)
+        polygons.append(square_polygon)
+
+    features = []
+    for polygon in polygons:
+        feature = Feature(geometry=mapping(polygon), properties={})
+        features.append(feature)
+        feature_collection = FeatureCollection(features)
+        geojson_str = dumps(feature_collection, indent=2)
+    return geojson_str
 
 
 def create_names(num, header=None) -> List[str]:

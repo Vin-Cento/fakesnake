@@ -15,6 +15,7 @@ psycopg2 = "*"
 python-dotenv = "*"
 fakesnake = "*"
 pipfile = "*"
+geojson = "*"
 
 [dev-packages]
 neovim = "*"
