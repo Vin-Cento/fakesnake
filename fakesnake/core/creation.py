@@ -9,9 +9,9 @@ from numpy import random
 from tqdm import tqdm
 
 from random import randint
+from typing import List
 
-
-def create_square(lat, lon, edge_length):
+def create_square(lat, lon, edge_length) -> List[str]:
     center = Point(lat, lon)
     north = distance(miles=edge_length).destination(center, 45)
     east = distance(miles=edge_length).destination(center, 135)
@@ -24,7 +24,7 @@ def create_square(lat, lon, edge_length):
     return polygon
 
 
-def create_shapes(num, dist, header):
+def create_shapes(num, dist, header) -> List[str]:
     fake = Faker()
     fake.add_provider(geo)
     polygons = [header]
@@ -37,7 +37,7 @@ def create_shapes(num, dist, header):
     return polygons
 
 
-def create_names(num, header):
+def create_names(num, header) -> List[str]:
     fake = Faker()
     names = [header]
     d_bool = False if num > 5000 else True
@@ -46,7 +46,7 @@ def create_names(num, header):
     return names
 
 
-def create_emails(num, header):
+def create_emails(num, header) -> List[str]:
     fake = Faker()
     emails = [header]
     d_bool = False if num > 5000 else True
@@ -55,7 +55,7 @@ def create_emails(num, header):
     return emails
 
 
-def create_addresses(num, header):
+def create_addresses(num, header) -> List[str]:
     fake = Faker()
     addresses = [header]
     d_bool = False if num > 5000 else True
@@ -72,7 +72,7 @@ def create_addresses(num, header):
     return addresses
 
 
-def create_passwords(num, min, max, header):
+def create_passwords(num, min, max, header) -> List[str]:
     assert min > 3, "min should be greater than 3"
     assert (
         max >= min
@@ -87,7 +87,7 @@ def create_passwords(num, min, max, header):
     return passwords
 
 
-def create_numbers(num, header):
+def create_numbers(num, header) -> List[str]:
     nums = [header]
     d_bool = False if num > 5000 else True
     for i in tqdm(random.normal(0, 1, num), disable=d_bool):
@@ -95,7 +95,7 @@ def create_numbers(num, header):
     return nums
 
 
-def create_texts(num, max, header):
+def create_texts(num, max, header) -> List[str]:
     fake = Faker()
     texts = [header]
     d_bool = False if num > 5000 else True
@@ -121,7 +121,11 @@ def inserts(filepath: str, table: str, quotechar: str, db_setting):
     engine = create_engine(f'sqlite:///{db_setting["name"]}.db', echo=False)
 
     for df in pd.read_csv(
-        filepath, delimiter=",", quotechar=quotechar, chunksize=100_000, encoding="utf-8"
+        filepath,
+        delimiter=",",
+        quotechar=quotechar,
+        chunksize=100_000,
+        encoding="utf-8",
     ):
         # df = pd.read_csv(filepath, delimiter=",", quotechar="'")
         df.to_sql(table, con=engine, if_exists="append", index=False)
