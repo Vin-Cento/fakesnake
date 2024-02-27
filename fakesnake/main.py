@@ -1,6 +1,6 @@
 import click
 
-from fakesnake.creation import *
+from core import *
 import fakesnake.setting as setting
 
 
