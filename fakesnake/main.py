@@ -20,10 +20,5 @@ cli.add_command(insert)
 cli.add_command(init)
 cli.add_command(text)
 
-
-def main():
-    cli()
-
-
 if __name__ == "__main__":
-    main()
+    cli()
