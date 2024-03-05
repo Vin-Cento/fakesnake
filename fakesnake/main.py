@@ -8,17 +8,28 @@ def cli():
     pass
 
 
-cli.add_command(shape)
-cli.add_command(geojson)
-cli.add_command(name)
-cli.add_command(email)
-cli.add_command(address)
-cli.add_command(password)
-cli.add_command(number)
-cli.add_command(config)
-cli.add_command(insert)
-cli.add_command(init)
-cli.add_command(text)
+@cli.group("gen")
+def generate():
+    pass
+
+
+@cli.group("db")
+def database():
+    pass
+
+
+generate.add_command(shape)
+generate.add_command(geojson)
+generate.add_command(name)
+generate.add_command(email)
+generate.add_command(address)
+generate.add_command(password)
+generate.add_command(number)
+generate.add_command(text)
+
+database.add_command(config)
+database.add_command(insert)
+database.add_command(init)
 
 if __name__ == "__main__":
     cli()
