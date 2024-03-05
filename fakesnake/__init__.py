@@ -1,2 +1,2 @@
 from handler import *
-from setting import *
+# from setting import *

@@ -1,7 +1,6 @@
 import click
 
 from core import *
-from setting import *
 
 
 @click.command()
@@ -64,45 +63,28 @@ def text(num, max, header):
     print("\n".join(create_texts(num, max, header)))
 
 
+@click.command("db")
+def db_show():
+    """Show the database"""
+    print("show db command")
+
+
+@click.command("shows")
+def db_shows():
+    """Show the database"""
+    list_db_config()
+
+
 @click.command()
 def config():
-    list()
+    print("show command")
 
 
-@click.command()
-def init():
-    init()
-
-
-@click.command()
-@click.argument("input", type=click.Path(exists=True))
-@click.argument("table", type=str)
-@click.option("--quotechar", "-D", type=str, default='"')
-@click.option("--user", "-u", type=str, default="")
-@click.option("--database_name", "-d", type=str, default="mydb")
-@click.option("--host", "-h", type=str, default="")
-@click.option("--port", "-p", type=str, default="")
-@click.option("--password", "-P", type=str, default="")
-def insert(input, table, quotechar, user, database_name, host, port, password):
-    from setting import DB
-
-    db_setting = {
-        "port": DB["port"],
-        "name": DB["name"],
-        "host": DB["host"],
-        "pass": DB["pass"],
-        "user": DB["user"],
-    }
-
-    custom_setting = {
-        "user": user,
-        "name": database_name,
-        "host": host,
-        "port": port,
-        "pass": password,
-    }
-    for k in custom_setting:
-        if custom_setting[k] != "":
-            db_setting[k] = custom_setting[k]
-
-    inserts(input, table, quotechar, db_setting)
+# @click.command()
+# def config():
+#     setting.list()
+#
+#
+# @click.command()
+# def init():
+#     setting.init()

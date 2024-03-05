@@ -112,10 +112,19 @@ def create_texts(num, max, header=None) -> List[str]:
     return texts
 
 
+def create_uuid(num, header=None) -> List[str]:
+    fake = Faker()
+    uuids = [header] if header else []
+    d_bool = False if num > 5000 else True
+    for _ in tqdm(range(num), disable=d_bool):
+        uuids.append(f"'{fake.uuid4()}'")
+    return uuids
+
+
 def inserts(filepath: str, table: str, quotechar: str, db_setting):
     import pandas as pd
 
-    from sqlalchemy import create_engine, URL
+    from sqlalchemy import create_engine  # , URL
 
     # pg_url = URL.create(
     #     "postgresql+psycopg2",
