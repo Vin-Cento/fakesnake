@@ -75,11 +75,21 @@ def tables_show():
     """Show the database"""
     show_tables()
 
+
 @click.command("describe")
 @click.argument("name")
 def table_describe(name: str):
     """Show the database"""
     describe_table(name)
+
+
+@click.command("insert")
+@click.argument("table")
+@click.option("--num", "-n", type=int, default=10)
+def table_insert(table: str, num: int):
+    """Insert random data into database"""
+    insert_table(table, num)
+
 
 @click.command("shows")
 def db_shows():

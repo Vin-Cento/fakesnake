@@ -34,6 +34,7 @@ generate.add_command(text)
 
 database.add_command(db_shows)
 database.add_command(table_describe)
+database.add_command(table_insert)
 
 
 show_db.add_command(table_show)

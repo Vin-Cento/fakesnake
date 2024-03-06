@@ -45,12 +45,21 @@ def create_geojson(num, dist) -> List[str]:
     return geojson_str
 
 
-def create_names(num, header=None) -> List[str]:
+def create_names(num, max_nb_chars=None,with_quotes=False, header=None) -> List[str]:
     fake = Faker()
     names = [header] if header else []
     d_bool = False if num > 5000 else True
     for _ in tqdm(range(num), disable=d_bool):
-        names.append(f"'{fake.name()}'")
+        if with_quotes:
+            if max_nb_chars:
+                names.append(f"'{fake.name()[:max_nb_chars]}'")
+            else:
+                names.append(f"'{fake.name()}'")
+        else:
+            if max_nb_chars:
+                names.append(fake.name()[:max_nb_chars])
+            else:
+                names.append(fake.name())
     return names
 
 
@@ -103,12 +112,15 @@ def create_numbers(num, header=None) -> List[str]:
     return nums
 
 
-def create_texts(num, max, header=None) -> List[str]:
+def create_texts(num, max, with_quotes=False, header=None) -> List[str]:
     fake = Faker()
     texts = [header] if header else []
     d_bool = False if num > 5000 else True
     for _ in tqdm(range(num), disable=d_bool):
-        texts.append(f"'{fake.text(max_nb_chars=max)}'")
+        if with_quotes:
+            texts.append(f"'{fake.text(max_nb_chars=max)}'")
+        else:
+            texts.append(fake.text(max_nb_chars=max))
     return texts
 
 

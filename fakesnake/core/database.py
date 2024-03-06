@@ -1,21 +1,25 @@
 import psycopg2
-import pandas as pd
 from sqlalchemy import create_engine, URL
 
-from core import create_texts, create_uuid, create_shapes#, get_table_value
+from core import (
+    create_texts,
+    create_uuid,
+    create_shapes,
+    create_names,
+)  # , get_table_value
 
 from rich.console import Console
 from rich.table import Table
 from utils import get_table_description, get_table_relationship
 from collections import defaultdict
-from utils import DB
+from utils import (
+    DB,
+    get_table_description,
+    get_table_relationship,
+    get_table_value,
+    insert_sql,
+)
 from os import listdir
-
-
-def get_db_config():
-    """Show the database config"""
-    for key in DB:
-        print(DB[key])
 
 
 def init():
@@ -35,7 +39,13 @@ def init():
             )
         print(".env created")
 
+
 def show_table(table: str):
+    t = Table(title=f"Table: {table}")
+    description = get_table_description(table)
+    for i in description:  # type: ignore
+        t.add_column(i[0], justify="right", style="cyan", no_wrap=True)
+
     with psycopg2.connect(
         host=DB["host"],
         database=DB["name"],
@@ -54,11 +64,14 @@ def show_table(table: str):
                     results = cursor.fetchall()
                     for row in results:
                         print(row)
+
                 else:
                     cursor.execute(f"SELECT * FROM {table};")
                     results = cursor.fetchall()
                     for row in results:
-                        print(row)
+                        t.add_row(*row)  # type: ignore
+                    console = Console()
+                    console.print(t)
 
         except psycopg2.errors.QueryCanceled as e:
             print("Query was canceled:", e)
@@ -85,67 +98,61 @@ def show_tables():
             print("Query was canceled:", e)
 
 
-def inserts(filepath: str, table: str, quotechar: str):
-    pg_url = URL.create(
-        "postgresql+psycopg2",
-        username=DB["user"],
-        password=DB["pass"],
-        host=DB["host"],
-        port=DB["port"],
-        database=DB["name"],
-    )
-    engine = create_engine(pg_url)
+def insert_table(table: str, num: int) -> None:
+    description = get_table_description(table)
+    relation = get_table_relationship(table)
+    special_rules = defaultdict(lambda: None)
+    # read in special rules
+    for _, mainCol, foreignTable, foreignCol in relation:  # type: ignore
+        special_rules[mainCol] = (foreignTable, foreignCol)  # type: ignore
 
-    for df in pd.read_csv(
-        filepath,
-        delimiter=",",
-        quotechar=quotechar,
-        chunksize=100_000,
-        encoding="utf-8",
-    ):
-        # df = pd.read_csv(filepath, delimiter=",", quotechar="'")
-        df.to_sql(table, con=engine, if_exists="append", index=False)
+    data = dict()
 
-    print(f"upload to {table}")
+    col_names = []
+    for col_name, dtype, charlimit, default in description:  # type: ignore
+        col_names.append(col_name)
+        if default is None:  # type: ignore
+            if special_rules[col_name]:
+                res = get_table_value(special_rules[col_name][0], special_rules[col_name][1].replace(",", ""))  # type: ignore
+                # randonmly sample values from the foreign table of size 10
+                if res == None:
+                    raise ValueError(
+                        f"Foreign table {special_rules[col_name][0]} not found"  # type: ignore
+                    )
 
+                if len(res) == 0:
+                    raise ValueError(
+                        f"Foreign table {special_rules[col_name][0]} is empty"  # type: ignore
+                    )
+                data[col_name] = [res[i % len(res)][0] for i in range(num)]
+            else:
+                if dtype == "uuid":
+                    data[col_name] = create_uuid(num)
 
-# def insert_table(table: str):
-#     description = get_table_description(table)
-#     relation = get_table_relationship(table)
-#     special_rules = defaultdict(lambda: None)
-#     # read in special rules
-#     for row in relation:  # type: ignore
-#         special_rules[row[1]] = (row[2], row[3])  # type: ignore
-#
-#     data = dict()
-#     # generate data for each column
-#     for col_name, dtype, charlimit, default in description:  # type: ignore
-#         # print(col_name, dtype, charlimit, default)
-#         # print(special_rules[col_name])
-#         if default is None:  # type: ignore
-#             if special_rules[col_name]:
-#                 print(special_rules)
-#                 query = f"select {special_rules[col_name][1]} from {special_rules[col_name][0]}"
-#                 get_table_value(table, col_name)
-#                 print(query)
-#                 continue
-#             else:
-#                 if dtype == "uuid":
-#                     data[col_name] = create_uuid(10)
-#
-#                 if dtype == "varchar":
-#                     if charlimit is None:
-#                         data[col_name] = create_texts(10, 255)
-#                     else:
-#                         data[col_name] = create_texts(10, charlimit)
-#                 if dtype == "text":
-#                     data[col_name] = create_texts(10, 255)
-#
-#                 if dtype == "text":
-#                     data[col_name] = create_shapes(10, 5)
-#         else:
-#             continue
-#     # print(data)
+                if dtype == "geometry":
+                    data[col_name] = create_shapes(num, 4)
+
+                if dtype == "varchar":
+                    if "name" in col_name.lower():
+                        if charlimit is None:
+                            data[col_name] = create_names(num)
+                        else:
+                            data[col_name] = create_names(num, max_nb_chars=charlimit)
+                    else:
+                        if charlimit is None:
+                            data[col_name] = create_texts(num, 255)
+                        else:
+                            data[col_name] = create_texts(num, charlimit)
+                if dtype == "text":
+                    if "name" in col_name:
+                        data[col_name] = create_names(num)
+                    else:
+                        data[col_name] = create_texts(num, 255)
+
+        else:
+            continue
+
+    insert_sql(table, data)
 
 
 def describe_table(table: str):

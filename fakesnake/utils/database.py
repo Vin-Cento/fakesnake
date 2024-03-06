@@ -23,10 +23,6 @@ else:
     DB["user"] = "postgres"
 
 
-def get_db_info() -> dict:
-    return DB
-
-
 def get_table_description(table) -> List[Tuple[Any]] | None:
     with psycopg2.connect(
         host=DB["host"],
@@ -58,7 +54,7 @@ def get_table_value(table, column) -> List[Tuple[Any]] | None:
         # Create a cursor object to execute SQL queries
         try:
             with conn.cursor() as cursor:
-                query = f"SELECT {column} FROM '{table}';"
+                query = f'SELECT {column} FROM "{table}";'
                 cursor.execute(query)
                 results = cursor.fetchall()
                 return results
@@ -66,7 +62,7 @@ def get_table_value(table, column) -> List[Tuple[Any]] | None:
             print("Query was canceled:", e)
 
 
-def get_table_relationship(table) -> List[Tuple[Any]] | None:
+def get_table_relationship(table) -> List[Tuple[str]] | None:
     with psycopg2.connect(
         host=DB["host"],
         database=DB["name"],
@@ -95,5 +91,34 @@ def get_table_relationship(table) -> List[Tuple[Any]] | None:
                 cursor.execute(query)
                 results = cursor.fetchall()
                 return results
+        except psycopg2.errors.QueryCanceled as e:
+            print("Query was canceled:", e)
+
+
+def insert_sql(table: str, data):
+    insert_data = []
+    columns = list(data.keys())
+    for i in range(len(data[columns[0]])):  # type: ignore
+        row = ()
+        for key in data.keys():
+            row += (data[key][i],)
+        insert_data.append(row)
+
+    with psycopg2.connect(
+        host=DB["host"],
+        database=DB["name"],
+        user=DB["user"],
+        password=DB["pass"],
+        port=DB["port"],
+    ) as conn:
+        # Create a cursor object to execute SQL queries
+        try:
+            with conn.cursor() as cursor:
+                query = f"INSERT INTO {table} ({','.join(columns)}) VALUES ({','.join(['%s' for _ in columns])});"
+
+                print(query)
+                print(insert_data)
+                cursor.executemany(query, insert_data)
+                conn.commit()
         except psycopg2.errors.QueryCanceled as e:
             print("Query was canceled:", e)
