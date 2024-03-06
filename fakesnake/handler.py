@@ -63,16 +63,18 @@ def text(num, max, header):
     print("\n".join(create_texts(num, max, header)))
 
 
-@click.command("db")
-def db_show():
+@click.command("table")
+@click.argument("name")
+def table_show(name: str):
     """Show the database"""
-    print("show db command")
+    show_table(name)
 
 
 @click.command("shows")
 def db_shows():
-    """Show the database"""
-    list_db_config()
+    """Show the database config"""
+    for key in DB:
+        print(DB[key])
 
 
 @click.command()

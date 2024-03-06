@@ -12,7 +12,8 @@ from utils import DB
 from os import listdir
 
 
-def list_db_config():
+def get_db_config():
+    """Show the database config"""
     for key in DB:
         print(DB[key])
 
