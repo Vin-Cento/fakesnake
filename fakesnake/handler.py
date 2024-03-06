@@ -70,6 +70,17 @@ def table_show(name: str):
     show_table(name)
 
 
+@click.command("tables")
+def tables_show():
+    """Show the database"""
+    show_tables()
+
+@click.command("describe")
+@click.argument("name")
+def table_describe(name: str):
+    """Show the database"""
+    describe_table(name)
+
 @click.command("shows")
 def db_shows():
     """Show the database config"""
@@ -80,13 +91,3 @@ def db_shows():
 @click.command()
 def config():
     print("show command")
-
-
-# @click.command()
-# def config():
-#     setting.list()
-#
-#
-# @click.command()
-# def init():
-#     setting.init()

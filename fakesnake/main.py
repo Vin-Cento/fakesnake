@@ -33,12 +33,11 @@ generate.add_command(number)
 generate.add_command(text)
 
 database.add_command(db_shows)
+database.add_command(table_describe)
+
 
 show_db.add_command(table_show)
-# database.add_command(config)
-# database.add_command(insert)
-# database.add_command(show)
-# database.add_command(init)
+show_db.add_command(tables_show)
 
 if __name__ == "__main__":
     cli()
