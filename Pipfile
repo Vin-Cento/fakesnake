@@ -5,14 +5,11 @@ name = "pypi"
 
 [packages]
 numpy = "*"
-tox = "*"
 geopy = "*"
 shapely = "*"
 tqdm = "*"
-sqlalchemy = "*"
 psycopg2 = "*"
 python-dotenv = "*"
-fakesnake = "*"
 pipfile = "*"
 geojson = "*"
 
@@ -20,8 +17,8 @@ geojson = "*"
 neovim = "*"
 pytest = "*"
 twine = "*"
-fakesnake = {file = "dist/fakesnake-0.0.4-py3-none-any.whl"}
 litecli = "*"
+tox = "*"
 
 [requires]
 python_version = "3.11"
