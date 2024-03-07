@@ -41,10 +41,6 @@ def init():
 
 
 def show_table(table: str):
-    t = Table(title=f"Table: {table}")
-    description = get_table_description(table)
-    for i in description:  # type: ignore
-        t.add_column(i[0], justify="right", style="cyan", no_wrap=True)
 
     with psycopg2.connect(
         host=DB["host"],
@@ -56,22 +52,17 @@ def show_table(table: str):
         # Create a cursor object to execute SQL queries
         try:
             with conn.cursor() as cursor:
-                if table is None:
-                    # show all tables
-                    cursor.execute(
-                        "SELECT table_name FROM information_schema.tables WHERE table_schema='public';"
-                    )
-                    results = cursor.fetchall()
-                    for row in results:
-                        print(row)
+                t = Table(title=f"Table: {table}")
+                description = get_table_description(table)
+                for i in description:  # type: ignore
+                    t.add_column(i[0], justify="right", style="cyan")
 
-                else:
-                    cursor.execute(f"SELECT * FROM {table};")
-                    results = cursor.fetchall()
-                    for row in results:
-                        t.add_row(*row)  # type: ignore
-                    console = Console()
-                    console.print(t)
+                cursor.execute(f"SELECT * FROM {table};")
+                results = cursor.fetchall()
+                for row in results:
+                    t.add_row(*row)  # type: ignore
+                console = Console()
+                console.print(t)
 
         except psycopg2.errors.QueryCanceled as e:
             print("Query was canceled:", e)
@@ -93,7 +84,7 @@ def show_tables():
                 )
                 results = cursor.fetchall()
                 for row in results:
-                    print(row)
+                    print(row[0])
         except psycopg2.errors.QueryCanceled as e:
             print("Query was canceled:", e)
 
