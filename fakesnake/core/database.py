@@ -1,5 +1,4 @@
 import psycopg2
-from sqlalchemy import create_engine, URL
 
 from core import (
     create_texts,
@@ -57,10 +56,16 @@ def show_table(table: str):
                 for i in description:  # type: ignore
                     t.add_column(i[0], justify="right", style="cyan")
 
-                cursor.execute(f"SELECT * FROM {table};")
+                cursor.execute(f"SELECT * FROM {table} LIMIT 10;")
                 results = cursor.fetchall()
                 for row in results:
-                    t.add_row(*row)  # type: ignore
+                    try:
+                        t.add_row(*row)  # type: ignore
+                    except:
+                        new_row = ()
+                        for r in row:
+                            new_row += (str(r),)
+                        t.add_row(*new_row)
                 console = Console()
                 console.print(t)
 
@@ -80,7 +85,7 @@ def show_tables():
         try:
             with conn.cursor() as cursor:
                 cursor.execute(
-                    "SELECT table_name FROM information_schema.tables WHERE table_schema='public';"
+                    "SELECT table_name FROM information_schema.tables WHERE table_schema='public' and table_type='BASE TABLE';"
                 )
                 results = cursor.fetchall()
                 for row in results:
