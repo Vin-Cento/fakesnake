@@ -1,7 +1,3 @@
-from geopy import Point
-from geopy.distance import distance
-from shapely.geometry import Polygon
-
 from faker import Faker
 from faker.providers import geo
 
@@ -10,24 +6,16 @@ from tqdm import tqdm
 
 from random import randint
 from typing import List
+from geojson import Feature, FeatureCollection, dumps
+from shapely.geometry import mapping
 
-def create_square(lat, lon, edge_length) -> List[str]:
-    center = Point(lat, lon)
-    north = distance(miles=edge_length).destination(center, 45)
-    east = distance(miles=edge_length).destination(center, 135)
-    south = distance(miles=edge_length).destination(center, 225)
-    west = distance(miles=edge_length).destination(center, 315)
-
-    square_points = [north, east, south, west]
-    polygon = Polygon([(p.longitude, p.latitude) for p in square_points])
-
-    return polygon
+from utils import create_square
 
 
-def create_shapes(num, dist, header) -> List[str]:
+def create_shapes(num, dist, header=None) -> List[str]:
     fake = Faker()
     fake.add_provider(geo)
-    polygons = [header]
+    polygons = [header] if header else []
     d_bool = False if num > 5000 else True
     for _ in tqdm(range(num), disable=d_bool):
         # Generate random latitude and longitude
@@ -37,27 +25,56 @@ def create_shapes(num, dist, header) -> List[str]:
     return polygons
 
 
-def create_names(num, header) -> List[str]:
+def create_geojson(num, dist) -> List[str]:
     fake = Faker()
-    names = [header]
+    fake.add_provider(geo)
+    polygons = []
     d_bool = False if num > 5000 else True
     for _ in tqdm(range(num), disable=d_bool):
-        names.append(f"'{fake.name()}'")
+        # Generate random latitude and longitude
+        lat, lon = fake.latlng()
+        square_polygon = create_square(lat, lon, dist)
+        polygons.append(square_polygon)
+
+    features = []
+    for polygon in polygons:
+        feature = Feature(geometry=mapping(polygon), properties={})
+        features.append(feature)
+        feature_collection = FeatureCollection(features)
+        geojson_str = dumps(feature_collection, indent=2)
+    return geojson_str
+
+
+def create_names(num, max_nb_chars=None,with_quotes=False, header=None) -> List[str]:
+    fake = Faker()
+    names = [header] if header else []
+    d_bool = False if num > 5000 else True
+    for _ in tqdm(range(num), disable=d_bool):
+        if with_quotes:
+            if max_nb_chars:
+                names.append(f"'{fake.name()[:max_nb_chars]}'")
+            else:
+                names.append(f"'{fake.name()}'")
+        else:
+            if max_nb_chars:
+                names.append(fake.name()[:max_nb_chars])
+            else:
+                names.append(fake.name())
     return names
 
 
-def create_emails(num, header) -> List[str]:
+def create_emails(num, header=None) -> List[str]:
     fake = Faker()
-    emails = [header]
+    emails = [header] if header else []
     d_bool = False if num > 5000 else True
     for _ in tqdm(range(num), disable=d_bool):
         emails.append(f"'{fake.email()}'")
     return emails
 
 
-def create_addresses(num, header) -> List[str]:
+def create_addresses(num, header=None) -> List[str]:
     fake = Faker()
-    addresses = [header]
+    addresses = [header] if header else []
     d_bool = False if num > 5000 else True
     for _ in tqdm(range(num), disable=d_bool):
         street_address = fake.street_address()
@@ -72,14 +89,14 @@ def create_addresses(num, header) -> List[str]:
     return addresses
 
 
-def create_passwords(num, min, max, header) -> List[str]:
+def create_passwords(num, min, max, header=None) -> List[str]:
     assert min > 3, "min should be greater than 3"
     assert (
         max >= min
     ), "max should be greater than or equal to min, (default for max is 25)"
 
     fake = Faker()
-    passwords = [header]
+    passwords = [header] if header else []
 
     d_bool = False if num > 5000 else True
     for _ in tqdm(range(num), disable=d_bool):
@@ -87,27 +104,39 @@ def create_passwords(num, min, max, header) -> List[str]:
     return passwords
 
 
-def create_numbers(num, header) -> List[str]:
-    nums = [header]
+def create_numbers(num, header=None) -> List[str]:
+    nums = [header] if header else []
     d_bool = False if num > 5000 else True
     for i in tqdm(random.normal(0, 1, num), disable=d_bool):
         nums.append(i)
     return nums
 
 
-def create_texts(num, max, header) -> List[str]:
+def create_texts(num, max, with_quotes=False, header=None) -> List[str]:
     fake = Faker()
-    texts = [header]
+    texts = [header] if header else []
     d_bool = False if num > 5000 else True
     for _ in tqdm(range(num), disable=d_bool):
-        texts.append(f"'{fake.text(max_nb_chars=max)}'")
+        if with_quotes:
+            texts.append(f"'{fake.text(max_nb_chars=max)}'")
+        else:
+            texts.append(fake.text(max_nb_chars=max))
     return texts
+
+
+def create_uuid(num, header=None) -> List[str]:
+    fake = Faker()
+    uuids = [header] if header else []
+    d_bool = False if num > 5000 else True
+    for _ in tqdm(range(num), disable=d_bool):
+        uuids.append(f"'{fake.uuid4()}'")
+    return uuids
 
 
 def inserts(filepath: str, table: str, quotechar: str, db_setting):
     import pandas as pd
 
-    from sqlalchemy import create_engine, URL
+    from sqlalchemy import create_engine  # , URL
 
     # pg_url = URL.create(
     #     "postgresql+psycopg2",

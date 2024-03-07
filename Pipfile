@@ -9,12 +9,12 @@ tox = "*"
 geopy = "*"
 shapely = "*"
 tqdm = "*"
-pandas = "*"
 sqlalchemy = "*"
 psycopg2 = "*"
 python-dotenv = "*"
 fakesnake = "*"
 pipfile = "*"
+geojson = "*"
 
 [dev-packages]
 neovim = "*"
