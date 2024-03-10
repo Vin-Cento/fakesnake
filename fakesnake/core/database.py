@@ -5,11 +5,15 @@ from core import (
     create_uuid,
     create_shapes,
     create_names,
+    create_points,
+    create_ints,
+    create_numbers,
+    # create_floats,
 )  # , get_table_value
 
 from rich.console import Console
 from rich.table import Table
-from utils import get_table_description, get_table_relationship
+from utils import get_table_description, get_table_relationship, get_shapetype
 from collections import defaultdict
 from utils import (
     DB,
@@ -126,25 +130,65 @@ def insert_table(table: str, num: int) -> None:
                     data[col_name] = create_uuid(num)
 
                 if dtype == "geometry":
-                    data[col_name] = create_shapes(num, 4)
+                    shp_type = get_shapetype(table, col_name)
+                    if shp_type[0] == "POINT":  # type: ignore
+                        data[col_name] = create_points(num)
+                    else:
+                        data[col_name] = create_shapes(num, 4)
 
                 if dtype == "varchar":
                     if "name" in col_name.lower():
                         if charlimit is None:
                             data[col_name] = create_names(num)
+                        elif charlimit < 6:
+                            data[col_name] = create_names(num, charlimit)
                         else:
                             data[col_name] = create_names(num, max_nb_chars=charlimit)
                     else:
                         if charlimit is None:
                             data[col_name] = create_texts(num, 255)
+                        elif charlimit < 6:
+                            data[col_name] = create_names(num, charlimit)
                         else:
                             data[col_name] = create_texts(num, charlimit)
+
+                if dtype == "bpchar":
+                    if "name" in col_name.lower():
+                        if charlimit is None:
+                            data[col_name] = create_names(num)
+                        elif charlimit < 6:
+                            data[col_name] = create_names(num, charlimit)
+                        else:
+                            data[col_name] = create_names(num, max_nb_chars=charlimit)
+                    else:
+                        if charlimit is None:
+                            data[col_name] = create_texts(num, 255)
+                        elif charlimit < 6:
+                            data[col_name] = create_names(num, charlimit)
+                        else:
+                            data[col_name] = create_texts(num, charlimit)
+
                 if dtype == "text":
                     if "name" in col_name:
-                        data[col_name] = create_names(num)
+                        if charlimit is None:
+                            data[col_name] = create_names(num)
+                        elif charlimit < 6:
+                            data[col_name] = create_names(num, charlimit)
+                        else:
+                            data[col_name] = create_names(num, max_nb_chars=charlimit)
                     else:
-                        data[col_name] = create_texts(num, 255)
+                        if charlimit is None:
+                            data[col_name] = create_texts(num, 255)
+                        elif charlimit < 6:
+                            data[col_name] = create_names(num, charlimit)
+                        else:
+                            data[col_name] = create_names(num, charlimit)
 
+                if "float" in dtype:
+                    data[col_name] = create_numbers(num)
+
+                if "int" in dtype:
+                    data[col_name] = create_ints(num)
         else:
             continue
 

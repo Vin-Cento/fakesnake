@@ -2,7 +2,6 @@ from faker import Faker
 from faker.providers import geo
 
 from numpy import random
-from tqdm import tqdm
 
 from random import randint
 from typing import List
@@ -16,8 +15,7 @@ def create_shapes(num, dist, header=None) -> List[str]:
     fake = Faker()
     fake.add_provider(geo)
     polygons = [header] if header else []
-    d_bool = False if num > 5000 else True
-    for _ in tqdm(range(num), disable=d_bool):
+    for _ in range(num):
         # Generate random latitude and longitude
         lat, lon = fake.latlng()
         square_polygon = create_square(lat, lon, dist)
@@ -25,12 +23,22 @@ def create_shapes(num, dist, header=None) -> List[str]:
     return polygons
 
 
+def create_points(num, header=None) -> List[str]:
+    fake = Faker()
+    fake.add_provider(geo)
+    points = [header] if header else []
+    for _ in range(num):
+        lat, lon = fake.latlng()
+        # TODO: automate the srid
+        points.append(f"SRID=4326;Point({lat} {lon})")
+    return points
+
+
 def create_geojson(num, dist) -> List[str]:
     fake = Faker()
     fake.add_provider(geo)
     polygons = []
-    d_bool = False if num > 5000 else True
-    for _ in tqdm(range(num), disable=d_bool):
+    for _ in range(num):
         # Generate random latitude and longitude
         lat, lon = fake.latlng()
         square_polygon = create_square(lat, lon, dist)
@@ -42,14 +50,13 @@ def create_geojson(num, dist) -> List[str]:
         features.append(feature)
         feature_collection = FeatureCollection(features)
         geojson_str = dumps(feature_collection, indent=2)
-    return geojson_str
+    return geojson_str  # type: ignore
 
 
-def create_names(num, max_nb_chars=None,with_quotes=False, header=None) -> List[str]:
+def create_names(num, max_nb_chars=None, with_quotes=False, header=None) -> List[str]:
     fake = Faker()
     names = [header] if header else []
-    d_bool = False if num > 5000 else True
-    for _ in tqdm(range(num), disable=d_bool):
+    for _ in range(num):
         if with_quotes:
             if max_nb_chars:
                 names.append(f"'{fake.name()[:max_nb_chars]}'")
@@ -66,8 +73,7 @@ def create_names(num, max_nb_chars=None,with_quotes=False, header=None) -> List[
 def create_emails(num, header=None) -> List[str]:
     fake = Faker()
     emails = [header] if header else []
-    d_bool = False if num > 5000 else True
-    for _ in tqdm(range(num), disable=d_bool):
+    for _ in range(num):
         emails.append(f"'{fake.email()}'")
     return emails
 
@@ -75,8 +81,7 @@ def create_emails(num, header=None) -> List[str]:
 def create_addresses(num, header=None) -> List[str]:
     fake = Faker()
     addresses = [header] if header else []
-    d_bool = False if num > 5000 else True
-    for _ in tqdm(range(num), disable=d_bool):
+    for _ in range(num):
         street_address = fake.street_address()
         # Generate a random city
         city = fake.city()
@@ -98,25 +103,30 @@ def create_passwords(num, min, max, header=None) -> List[str]:
     fake = Faker()
     passwords = [header] if header else []
 
-    d_bool = False if num > 5000 else True
-    for _ in tqdm(range(num), disable=d_bool):
+    for _ in range(num):
         passwords.append(f"'{fake.password(length=randint(min, max),)}'")
     return passwords
 
 
 def create_numbers(num, header=None) -> List[str]:
     nums = [header] if header else []
-    d_bool = False if num > 5000 else True
-    for i in tqdm(random.normal(0, 1, num), disable=d_bool):
+    for i in random.normal(0, 1, num):
         nums.append(i)
     return nums
+
+
+def create_ints(num, header=None) -> List[str]:
+    ints = [header] if header else []
+    for _ in range(num):
+        ints.append(random.randint(-100, 100))
+
+    return ints
 
 
 def create_texts(num, max, with_quotes=False, header=None) -> List[str]:
     fake = Faker()
     texts = [header] if header else []
-    d_bool = False if num > 5000 else True
-    for _ in tqdm(range(num), disable=d_bool):
+    for _ in range(num):
         if with_quotes:
             texts.append(f"'{fake.text(max_nb_chars=max)}'")
         else:
@@ -127,36 +137,6 @@ def create_texts(num, max, with_quotes=False, header=None) -> List[str]:
 def create_uuid(num, header=None) -> List[str]:
     fake = Faker()
     uuids = [header] if header else []
-    d_bool = False if num > 5000 else True
-    for _ in tqdm(range(num), disable=d_bool):
+    for _ in range(num):
         uuids.append(f"'{fake.uuid4()}'")
     return uuids
-
-
-def inserts(filepath: str, table: str, quotechar: str, db_setting):
-    import pandas as pd
-
-    from sqlalchemy import create_engine  # , URL
-
-    # pg_url = URL.create(
-    #     "postgresql+psycopg2",
-    #     username=db_setting["user"],
-    #     password=db_setting["pass"],
-    #     host=db_setting["host"],
-    #     port=db_setting["port"],
-    #     database=db_setting["name"],
-    # )
-    # engine = create_engine(pg_url)
-    engine = create_engine(f'sqlite:///{db_setting["name"]}.db', echo=False)
-
-    for df in pd.read_csv(
-        filepath,
-        delimiter=",",
-        quotechar=quotechar,
-        chunksize=100_000,
-        encoding="utf-8",
-    ):
-        # df = pd.read_csv(filepath, delimiter=",", quotechar="'")
-        df.to_sql(table, con=engine, if_exists="append", index=False)
-
-    print(f"upload to {table}")

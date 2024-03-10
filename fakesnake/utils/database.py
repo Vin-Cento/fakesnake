@@ -1,21 +1,19 @@
 import psycopg2
-from typing import Tuple, Any, List
-from os import getcwd, listdir, environ
+# from typing import Tuple, Any, List
+from os import getcwd, listdir
 
-from dotenv import load_dotenv
+from dotenv import dotenv_values
 
 
 DB = dict()
 if ".env" in listdir(getcwd()):
-    load_dotenv(f"{getcwd()}/.env")
+    v = dotenv_values(f"{getcwd()}/.env")
 
     # Access the variables
-    DB["port"] = environ.get("DB_PORT")
-    DB["name"] = environ.get("DB_NAME")
-    DB["host"] = environ.get("DB_HOST")
-    DB["pass"] = environ.get("DB_PASS")
-    DB["user"] = environ.get("DB_USER")
+    for e in v.keys():
+        DB[e] = v[e]
 else:
+    print("in default")
     DB["port"] = "5432"
     DB["name"] = "postgres"
     DB["host"] = "localhost"
@@ -23,7 +21,7 @@ else:
     DB["user"] = "postgres"
 
 
-def get_table_description(table) -> List[Tuple[Any]] | None:
+def get_table_description(table):
     with psycopg2.connect(
         host=DB["host"],
         database=DB["name"],
@@ -43,7 +41,7 @@ def get_table_description(table) -> List[Tuple[Any]] | None:
             print("Query was canceled:", e)
 
 
-def get_table_value(table, column) -> List[Tuple[Any]] | None:
+def get_table_value(table, column):
     with psycopg2.connect(
         host=DB["host"],
         database=DB["name"],
@@ -62,7 +60,7 @@ def get_table_value(table, column) -> List[Tuple[Any]] | None:
             print("Query was canceled:", e)
 
 
-def get_table_relationship(table) -> List[Tuple[str]] | None:
+def get_table_relationship(table):
     with psycopg2.connect(
         host=DB["host"],
         database=DB["name"],
@@ -94,6 +92,23 @@ def get_table_relationship(table) -> List[Tuple[str]] | None:
         except psycopg2.errors.QueryCanceled as e:
             print("Query was canceled:", e)
 
+def get_shapetype(table: str, col: str):
+    with psycopg2.connect(
+        host=DB["host"],
+        database=DB["name"],
+        user=DB["user"],
+        password=DB["pass"],
+        port=DB["port"],
+    ) as conn:
+        try:
+            with conn.cursor() as cursor:
+                query =f"SELECT type FROM geometry_columns WHERE f_table_name = '{table}' and f_geometry_column = '{col}';"
+                cursor.execute(query)
+                result = cursor.fetchall()
+                return result[0]
+
+        except psycopg2.errors.QueryCanceled as e:
+            print("Query was canceled:", e)
 
 def insert_sql(table: str, data):
     insert_data = []
@@ -114,10 +129,9 @@ def insert_sql(table: str, data):
         # Create a cursor object to execute SQL queries
         try:
             with conn.cursor() as cursor:
-                query = f"INSERT INTO {table} ({','.join(columns)}) VALUES ({','.join(['%s' for _ in columns])});"
+                string_col = [f'"{c}"' for c in columns]
+                query = f"INSERT INTO {table} ({','.join(string_col)}) VALUES ({','.join(['%s' for _ in columns])});"
 
-                print(query)
-                print(insert_data)
                 cursor.executemany(query, insert_data)
                 conn.commit()
         except psycopg2.errors.QueryCanceled as e:

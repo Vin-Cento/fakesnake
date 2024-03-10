@@ -52,7 +52,8 @@ def password(num, min, max, header):
 @click.option("--num", "-n", type=int, default=10)
 @click.option("--header", "-h", type=str, default=None)
 def number(num, header):
-    print("\n".join(create_numbers(num, header)))
+    numbers = [str(n) for n in create_numbers(num, header)]
+    print("\n".join(numbers))
 
 
 @click.command()
