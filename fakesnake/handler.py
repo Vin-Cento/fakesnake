@@ -1,6 +1,7 @@
 import click
 
-from core import *
+from .core.creation import *
+from .core.database import *
 
 
 @click.command()
@@ -65,10 +66,10 @@ def text(num, max, header):
 
 
 @click.command("table")
-@click.argument("name")
-def table_show(name: str):
+@click.argument("table")
+def table_show(table: str):
     """Show the database"""
-    show_table(name)
+    show_table(table)
 
 
 @click.command("tables")
@@ -78,10 +79,10 @@ def tables_show():
 
 
 @click.command("describe")
-@click.argument("name")
-def table_describe(name: str):
+@click.argument("table")
+def table_describe(table: str):
     """Show the database"""
-    describe_table(name)
+    describe_table(table)
 
 
 @click.command("insert")
