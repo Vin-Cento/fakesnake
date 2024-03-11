@@ -1,1 +1,1 @@
-from handler import *
+# from fakesnake.handler import *

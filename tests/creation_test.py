@@ -1,4 +1,4 @@
-from fakesnake import create_passwords
+from fakesnake.core import create_passwords
 
 
 def test_passwords_num():

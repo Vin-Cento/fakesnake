@@ -1,6 +1,9 @@
 import click
-from core import *
-from handler import *
+
+# from .core.creation import *
+# from .core.database import *
+
+from .handler import *
 
 
 @click.group()
@@ -40,5 +43,10 @@ database.add_command(table_insert)
 show_db.add_command(table_show)
 show_db.add_command(tables_show)
 
-if __name__ == "__main__":
+
+def main():
     cli()
+
+
+if __name__ == "__main__":
+    main()

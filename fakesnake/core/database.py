@@ -1,6 +1,6 @@
 import psycopg2
 
-from core import (
+from .creation import (
     create_texts,
     create_uuid,
     create_shapes,
@@ -13,14 +13,14 @@ from core import (
 
 from rich.console import Console
 from rich.table import Table
-from utils import get_table_description, get_table_relationship, get_shapetype
 from collections import defaultdict
-from utils import (
+from ..utils.database import (
     DB,
     get_table_description,
     get_table_relationship,
     get_table_value,
     insert_sql,
+    get_shapetype,
 )
 from os import listdir
 
@@ -32,12 +32,12 @@ def init():
         with open(".env", "w") as file:
             file.writelines(
                 [
-                    "DB_PORT=\n",
-                    "DB_NAME=\n",
-                    "DB_HOST=\n",
-                    "DB_PASS=\n",
-                    "DB_USER=\n",
-                    "DB_TYPE=\n",
+                    "port=\n",
+                    "name=\n",
+                    "host=\n",
+                    "pass=\n",
+                    "user=\n",
+                    "type=\n",
                 ]
             )
         print(".env created")

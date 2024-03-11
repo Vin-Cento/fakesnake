@@ -8,7 +8,7 @@ from typing import List
 from geojson import Feature, FeatureCollection, dumps
 from shapely.geometry import mapping
 
-from utils import create_square
+from ..utils.util import create_square
 
 
 def create_shapes(num, dist, header=None) -> List[str]:
