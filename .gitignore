@@ -6,3 +6,4 @@ dist
 .tox
 assets/*.xcf
 .env*
+.coverage
