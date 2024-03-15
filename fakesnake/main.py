@@ -26,22 +26,22 @@ def show_db():
     pass
 
 
-generate.add_command(shape)
-generate.add_command(geojson)
-generate.add_command(name)
-generate.add_command(email)
-generate.add_command(address)
-generate.add_command(password)
-generate.add_command(number)
-generate.add_command(text)
+generate.add_command(shape_handler)
+generate.add_command(geojson_handler)
+generate.add_command(name_handler)
+generate.add_command(email_handler)
+generate.add_command(address_handler)
+generate.add_command(password_handler)
+generate.add_command(number_handler)
+generate.add_command(text_handler)
 
 database.add_command(db_shows)
-database.add_command(table_describe)
+database.add_command(describe_table_handler)
 database.add_command(table_insert)
 
 
-show_db.add_command(table_show)
-show_db.add_command(tables_show)
+show_db.add_command(show_table_handler)
+show_db.add_command(show_tables_handler)
 
 
 def main():
