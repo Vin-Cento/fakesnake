@@ -3,16 +3,16 @@ from fakesnake.handler import *
 import json
 
 
-def test_gen_shape():
+def test_shape_handler():
     runner = CliRunner()
-    result = runner.invoke(shape, ["-n", "10"])
+    result = runner.invoke(shape_handler, ["-n", "10"])
     assert result.exit_code == 0
     assert len(result.output.splitlines()) == 10
 
 
-def test_gen_geojson():
+def test_geojson_handler():
     runner = CliRunner()
-    result = runner.invoke(geojson, ["-n", "10"])
+    result = runner.invoke(geojson_handler, ["-n", "10"])
     assert result.exit_code == 0
     try:
         json.loads(result.output)
@@ -21,70 +21,69 @@ def test_gen_geojson():
         assert False
 
 
-def test_gen_name():
+def test_name_handler():
     runner = CliRunner()
-    result = runner.invoke(name, ["-n", "10"])
+    result = runner.invoke(name_handler, ["-n", "10"])
     assert result.exit_code == 0
     assert len(result.output.splitlines()) == 10
 
 
-def test_gen_email():
+def test_email_handler():
     runner = CliRunner()
-    result = runner.invoke(email, ["-n", "10"])
+    result = runner.invoke(email_handler, ["-n", "10"])
     assert result.exit_code == 0
     assert len(result.output.splitlines()) == 10
 
 
-def test_gen_address():
+def test_address_handler():
     runner = CliRunner()
-    result = runner.invoke(address, ["-n", "10"])
+    result = runner.invoke(address_handler, ["-n", "10"])
     assert result.exit_code == 0
     assert len(result.output.splitlines()) == 10
 
 
-def test_gen_password():
+def test_password_handler():
     runner = CliRunner()
-    result = runner.invoke(password, ["-n", "10"])
+    result = runner.invoke(password_handler, ["-n", "10"])
     assert result.exit_code == 0
     assert len(result.output.splitlines()) == 10
 
 
-def test_gen_number():
+def test_number_handler():
     runner = CliRunner()
-    result = runner.invoke(number, ["-n", "10"])
+    result = runner.invoke(number_handler, ["-n", "10"])
     assert result.exit_code == 0
     assert len(result.output.splitlines()) == 10
 
 
-def test_gen_text():
+def test_text_handler():
     runner = CliRunner()
-    result = runner.invoke(text, ["-n", "10"])
+    result = runner.invoke(text_handler, ["-n", "10"])
     assert result.exit_code == 0
-    # assert len(result.output.splitlines()) == 10
 
 
-def test_db_shows():
+def test_db_shows_handler():
     runner = CliRunner()
     result = runner.invoke(db_shows)
     assert result.exit_code == 0
     assert len(result.output.splitlines()) > 0
 
 
-def test_table_show():
+def test_show_table_handler():
     runner = CliRunner()
-    result = runner.invoke(table_show, ["users"])
+    result = runner.invoke(show_table_handler, ["users"])
     print(result.output)
     assert result.exit_code == 0
 
 
-def test_tables_show():
+def test_show_tables_handler():
     runner = CliRunner()
-    result = runner.invoke(tables_show)
+    result = runner.invoke(show_tables_handler)
     assert result.exit_code == 0
 
 
-def test_table_describe():
+def test_describe_table():
     runner = CliRunner()
-    result = runner.invoke(table_describe, ["users"])
+    result = runner.invoke(describe_table_handler, ["users"])
     assert result.exit_code == 0
     print(result.output)

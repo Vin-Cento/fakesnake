@@ -1,4 +1,5 @@
 import psycopg2
+
 # from typing import Tuple, Any, List
 from os import getcwd, listdir
 
@@ -92,6 +93,7 @@ def get_table_relationship(table):
         except psycopg2.errors.QueryCanceled as e:
             print("Query was canceled:", e)
 
+
 def get_shapetype(table: str, col: str):
     with psycopg2.connect(
         host=DB["host"],
@@ -102,13 +104,14 @@ def get_shapetype(table: str, col: str):
     ) as conn:
         try:
             with conn.cursor() as cursor:
-                query =f"SELECT type FROM geometry_columns WHERE f_table_name = '{table}' and f_geometry_column = '{col}';"
+                query = f"SELECT type FROM geometry_columns WHERE f_table_name = '{table}' and f_geometry_column = '{col}';"
                 cursor.execute(query)
                 result = cursor.fetchall()
                 return result[0]
 
         except psycopg2.errors.QueryCanceled as e:
             print("Query was canceled:", e)
+
 
 def insert_sql(table: str, data):
     insert_data = []
