@@ -98,5 +98,7 @@ def test_describe_table():
 def test_exec():
     runner = CliRunner()
     result = runner.invoke(exec_handler, ["-e", "select * from users"])
+    result2 = runner.invoke(exec_handler, ["-e", "truncate users"])
     print(result.output)
     assert result.exit_code == 0
+    assert result2.exit_code == 0
