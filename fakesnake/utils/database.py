@@ -156,10 +156,13 @@ def run_command(query):
                 cursor.execute(query)
 
                 # Fetch the results of the query
-                results = cursor.fetchall()
+                if query.lower().startswith("select"):
+                    results = cursor.fetchall()
 
-                # Process the results as needed
-                for row in results:
-                    print(row)
+                    # Process the results as needed
+                    for row in results:
+                        print(row)
+                else:
+                    conn.commit()
         except psycopg2.errors.QueryCanceled as e:
             print("Query was canceled:", e)
