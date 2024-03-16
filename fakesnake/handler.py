@@ -26,21 +26,21 @@ def name_handler(num, header):
     print("\n".join(create_names(num, header)))
 
 
-@click.command()
+@click.command("email")
 @click.option("--num", "-n", type=int, default=10)
 @click.option("--header", "-h", type=str, default=None)
 def email_handler(num, header):
     print("\n".join(create_emails(num, header)))
 
 
-@click.command()
+@click.command("address")
 @click.option("--num", "-n", type=int, default=10)
 @click.option("--header", "-h", type=str, default=None)
 def address_handler(num, header):
     print("\n".join(create_addresses(num, header)))
 
 
-@click.command()
+@click.command("password")
 @click.option("--num", "-n", type=int, default=10)
 @click.option("--min", "-l", type=int, default=15)
 @click.option("--max", "-u", type=int, default=25)
@@ -49,7 +49,7 @@ def password_handler(num, min, max, header):
     print("\n".join(create_passwords(num, min, max, header)))
 
 
-@click.command()
+@click.command("number")
 @click.option("--num", "-n", type=int, default=10)
 @click.option("--header", "-h", type=str, default=None)
 def number_handler(num, header):
@@ -57,7 +57,7 @@ def number_handler(num, header):
     print("\n".join(numbers))
 
 
-@click.command()
+@click.command("text")
 @click.option("--num", "-n", type=int, default=10)
 @click.option("--max", "-m", type=int, default=100)
 @click.option("--header", "-h", type=str, default=None)
@@ -88,6 +88,7 @@ def describe_table_handler(table: str):
 @click.command("insert")
 @click.argument("table")
 @click.option("--num", "-n", type=int, default=10)
+# @click.option("--file", type=click.Path(exists=True), required=False)
 def table_insert(table: str, num: int):
     """Insert random data into database"""
     insert_table(table, num)
@@ -100,7 +101,7 @@ def db_shows():
         print(DB[key])
 
 
-@click.command()
+@click.command("config")
 def config():
     print("show command")
 
