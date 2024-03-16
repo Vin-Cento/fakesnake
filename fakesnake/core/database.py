@@ -21,6 +21,7 @@ from ..utils.database import (
     get_table_value,
     insert_sql,
     get_shapetype,
+    run_command,
 )
 from os import listdir
 
@@ -226,3 +227,7 @@ def describe_table(table: str):
             t.add_row(str(row[0]), str(row[1]), str(row[2]), str(row[3]))  # type: ignore
         console = Console()
         console.print(t)
+
+
+def execute_cmd(query: str):
+    run_command(query)

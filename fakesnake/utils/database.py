@@ -139,3 +139,27 @@ def insert_sql(table: str, data):
                 conn.commit()
         except psycopg2.errors.QueryCanceled as e:
             print("Query was canceled:", e)
+
+
+def run_command(query):
+    with psycopg2.connect(
+        host=DB["host"],
+        database=DB["name"],
+        user=DB["user"],
+        password=DB["pass"],
+        port=DB["port"],
+    ) as conn:
+        # Create a cursor object to execute SQL queries
+        try:
+            with conn.cursor() as cursor:
+                # Execute SQL queries using the cursor
+                cursor.execute(query)
+
+                # Fetch the results of the query
+                results = cursor.fetchall()
+
+                # Process the results as needed
+                for row in results:
+                    print(row)
+        except psycopg2.errors.QueryCanceled as e:
+            print("Query was canceled:", e)
