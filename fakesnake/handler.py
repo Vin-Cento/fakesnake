@@ -103,3 +103,12 @@ def db_shows():
 @click.command()
 def config():
     print("show command")
+
+
+@click.command("exec")
+@click.option("--exe", "-e", type=str)
+def exec_handler(exe: str):
+    if exe == None:
+        print("empty")
+    else:
+        execute_cmd(exe)

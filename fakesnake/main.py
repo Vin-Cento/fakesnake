@@ -39,6 +39,8 @@ database.add_command(db_shows)
 database.add_command(describe_table_handler)
 database.add_command(table_insert)
 
+database.add_command(exec_handler)
+
 
 show_db.add_command(show_table_handler)
 show_db.add_command(show_tables_handler)
