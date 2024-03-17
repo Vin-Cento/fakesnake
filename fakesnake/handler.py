@@ -110,10 +110,10 @@ def config_handler():
 
 
 @click.command("exec")
-@click.option("--exe", "-e", type=str)
-def exec_handler(exe: str):
-    if exe == None:
+@click.argument("query", type=str)
+def exec_handler(query: str):
     """execute a sql command"""
+    if query == None:
         print("empty")
     else:
-        execute_cmd(exe)
+        execute_cmd(query)
