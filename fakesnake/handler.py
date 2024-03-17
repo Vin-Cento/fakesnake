@@ -102,16 +102,11 @@ def table_insert(table: str, num: int):
     insert_table(table, num)
 
 
-@click.command("shows")
-def db_shows():
+@click.command("config")
+def config_handler():
     """show the database config"""
     for key in DB:
-        print(DB[key])
-
-
-@click.command("config")
-def config():
-    print("show command")
+        print(f"{key}:", DB[key])
 
 
 @click.command("exec")
