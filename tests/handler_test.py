@@ -64,7 +64,7 @@ def test_text_handler():
 
 def test_db_shows_handler():
     runner = CliRunner()
-    result = runner.invoke(db_shows)
+    result = runner.invoke(config_handler)
     assert result.exit_code == 0
     assert len(result.output.splitlines()) > 0
 
@@ -97,8 +97,7 @@ def test_describe_table():
 
 def test_exec():
     runner = CliRunner()
-    result = runner.invoke(exec_handler, ["-e", "select * from users"])
-    result2 = runner.invoke(exec_handler, ["-e", "truncate users"])
-    print(result.output)
+    result = runner.invoke(exec_handler, ["select * from users"])
+    result2 = runner.invoke(exec_handler, ["truncate users"])
     assert result.exit_code == 0
     assert result2.exit_code == 0
