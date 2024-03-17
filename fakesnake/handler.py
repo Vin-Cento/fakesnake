@@ -96,7 +96,6 @@ def describe_table_handler(table: str):
 @click.command("insert")
 @click.argument("table")
 @click.option("--num", "-n", type=int, default=10)
-# @click.option("--file", type=click.Path(exists=True), required=False)
 def table_insert(table: str, num: int):
     """insert random data into table"""
     insert_table(table, num)
