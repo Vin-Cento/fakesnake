@@ -13,17 +13,20 @@ def cli():
 
 @cli.group("gen")
 def generate():
+    """subcommand for generating data"""
     pass
 
 
 @cli.group("db")
 def database():
+    """subcommand for database interaction"""
     pass
 
 
 @database.group("show")
 def show_db():
-    pass
+#     """subcommand for """
+#     pass
 
 
 generate.add_command(shape_handler)
