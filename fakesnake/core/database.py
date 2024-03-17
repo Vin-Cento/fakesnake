@@ -45,7 +45,6 @@ def init():
 
 
 def show_table(table: str):
-
     with psycopg2.connect(
         host=DB["host"],
         database=DB["name"],
