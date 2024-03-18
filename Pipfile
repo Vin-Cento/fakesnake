@@ -23,7 +23,7 @@ twine = "*"
 litecli = "*"
 tox = "*"
 pgcli = "*"
-fakesnake = {file = "dist/fakesnake-0.0.7.tar.gz"}
+fakesnake = {file = "dist/fakesnake-0.0.8.tar.gz"}
 
 [requires]
 python_version = "3.8"
