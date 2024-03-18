@@ -2,10 +2,6 @@
 
 ## Usages
 
-### Generate Fake Data
-
-![generate demo](https://raw.githubusercontent.com/Vin-Cento/fakesnake/master/assets/generate_demo.gif)
-
 ```bash
 fakes --help
 ```
@@ -16,19 +12,58 @@ fakes --help
       --help  Show this message and exit.
 
     Commands:
-      address
-      config
-      email
-      init
-      insert
-      name
-      number
-      password
-      shape
+      db   subcommand for database interaction
+      gen  subcommand for generating data
 
-### Insert Data to DB
+### Generate Fake Data
 
-![insert demo](https://raw.githubusercontent.com/Vin-Cento/fakesnake/master/assets/insert_demo.gif)
+![generate demo](https://raw.githubusercontent.com/Vin-Cento/fakesnake/development/assets/fakesnake_gen_demo.gif)
+
+```bash
+fakes gen --help
+```
+
+    Usage: fakes gen [OPTIONS] COMMAND [ARGS]...
+
+      subcommand for generating data
+
+    Options:
+      --help  Show this message and exit.
+
+    Commands:
+      address   generate a list of address
+      email     generate a list of email
+      geojson   generate a list of geojson
+      name      generate a list of name
+      number    generate a list of number
+      password  generate a list of password
+      shape     generate a list of shape
+      text      generate a list of text
+
+### Insert Fake Data to Database
+
+##### (\*postgres only... other databases coming soon)
+
+![insert demo](https://raw.githubusercontent.com/Vin-Cento/fakesnake/development/assets/fakesnake_db_demo.gif)
+
+```bash
+fakes db --help
+```
+
+    Usage: fakes db [OPTIONS] COMMAND [ARGS]...
+
+      subcommand for database interaction
+
+    Options:
+      --help  Show this message and exit.
+
+    Commands:
+      config    show the database config
+      describe  describe the current database
+      exec      execute a sql command
+      insert    insert random data into table
+      table     show all columns the table
+      tables    show all tables the database
 
 ## Install
 
