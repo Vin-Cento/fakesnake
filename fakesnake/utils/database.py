@@ -1,6 +1,5 @@
 import psycopg2
 
-# from typing import Tuple, Any, List
 from os import getcwd, listdir
 
 from dotenv import dotenv_values
