@@ -1,8 +1,4 @@
 import click
-
-# from .core.creation import *
-# from .core.database import *
-
 from .handler import *
 
 
@@ -21,12 +17,6 @@ def generate():
 def database():
     """subcommand for database interaction"""
     pass
-
-
-# @database.group("show")
-# def show_db():
-#     """subcommand for """
-#     pass
 
 
 generate.add_command(shape_handler)
