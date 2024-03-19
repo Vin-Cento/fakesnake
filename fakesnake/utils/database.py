@@ -15,7 +15,8 @@ if platform.system() == "Linux":
         for e in v.keys():
             DB[e] = v[e]
     else:
-        print(f"""
+        print(
+            f"""
         Missing .env
         Create file {folder}/.env
 
@@ -25,7 +26,8 @@ if platform.system() == "Linux":
         DB["host"] = "localhost"
         DB["pass"] = ""
         DB["user"] = "postgres"
-        """)
+        """
+        )
 else:
     print("only available on linux")
     exit()
