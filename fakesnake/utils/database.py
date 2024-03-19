@@ -1,24 +1,28 @@
 import psycopg2
 
-from os import getcwd, listdir
+from os import getcwd, listdir, path
+import platform
 
 from dotenv import dotenv_values
 
 
 DB = dict()
-if ".env" in listdir(getcwd()):
-    v = dotenv_values(f"{getcwd()}/.env")
+if platform.system() == "Linux":
+    folder = f"{path.expanduser('~')}/.config/fakesnake"
+    if ".env" in listdir(folder):
+        v = dotenv_values(f"{folder}/.env")
 
-    # Access the variables
-    for e in v.keys():
-        DB[e] = v[e]
+        for e in v.keys():
+            DB[e] = v[e]
+    else:
+        DB["port"] = "5432"
+        DB["name"] = "postgres"
+        DB["host"] = "localhost"
+        DB["pass"] = ""
+        DB["user"] = "postgres"
 else:
-    print("in default")
-    DB["port"] = "5432"
-    DB["name"] = "postgres"
-    DB["host"] = "localhost"
-    DB["pass"] = ""
-    DB["user"] = "postgres"
+    print("only available on linux")
+    exit()
 
 
 def get_table_description(table):
@@ -29,10 +33,8 @@ def get_table_description(table):
         password=DB["pass"],
         port=DB["port"],
     ) as conn:
-        # Create a cursor object to execute SQL queries
         try:
             with conn.cursor() as cursor:
-                # TODO: combine udt_name and character_maximum_length together
                 query = f"SELECT column_name, udt_name, character_maximum_length, column_default FROM information_schema.columns WHERE table_name = '{table}';"
                 cursor.execute(query)
                 results = cursor.fetchall()
@@ -49,7 +51,6 @@ def get_table_value(table, column):
         password=DB["pass"],
         port=DB["port"],
     ) as conn:
-        # Create a cursor object to execute SQL queries
         try:
             with conn.cursor() as cursor:
                 query = f'SELECT {column} FROM "{table}";'
@@ -68,7 +69,6 @@ def get_table_relationship(table):
         password=DB["pass"],
         port=DB["port"],
     ) as conn:
-        # Create a cursor object to execute SQL queries
         try:
             with conn.cursor() as cursor:
                 query = f"""
@@ -128,7 +128,6 @@ def insert_sql(table: str, data):
         password=DB["pass"],
         port=DB["port"],
     ) as conn:
-        # Create a cursor object to execute SQL queries
         try:
             with conn.cursor() as cursor:
                 string_col = [f'"{c}"' for c in columns]
@@ -148,17 +147,12 @@ def run_command(query):
         password=DB["pass"],
         port=DB["port"],
     ) as conn:
-        # Create a cursor object to execute SQL queries
         try:
             with conn.cursor() as cursor:
-                # Execute SQL queries using the cursor
                 cursor.execute(query)
 
-                # Fetch the results of the query
                 if query.lower().startswith("select"):
                     results = cursor.fetchall()
-
-                    # Process the results as needed
                     for row in results:
                         print(row)
                 else:
