@@ -27,6 +27,7 @@ generate.add_command(address_handler)
 generate.add_command(password_handler)
 generate.add_command(number_handler)
 generate.add_command(text_handler)
+
 database.add_command(config_handler)
 database.add_command(describe_table_handler)
 database.add_command(table_insert)
