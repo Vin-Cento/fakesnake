@@ -34,6 +34,7 @@ database.add_command(table_insert)
 database.add_command(show_table_handler)
 database.add_command(show_tables_handler)
 database.add_command(exec_handler)
+database.add_command(init_handler)
 
 
 def main():

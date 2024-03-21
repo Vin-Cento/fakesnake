@@ -18,14 +18,7 @@ if platform.system() == "Linux":
         print(
             f"""
         Missing .env
-        Create file {folder}/.env
-
-        Example:
-        DB["port"] = "5432"
-        DB["name"] = "postgres"
-        DB["host"] = "localhost"
-        DB["pass"] = ""
-        DB["user"] = "postgres"
+        Run: fakes db init
         """
         )
 else:
@@ -35,10 +28,10 @@ else:
 
 def get_table_description(table):
     with psycopg2.connect(
-        host=DB["host"],
-        database=DB["name"],
-        user=DB["user"],
-        password=DB["pass"],
+        host=DB["hostname"],
+        database=DB["dbname"],
+        user=DB["username"],
+        password=DB["password"],
         port=DB["port"],
     ) as conn:
         try:
@@ -53,10 +46,10 @@ def get_table_description(table):
 
 def get_table_value(table, column):
     with psycopg2.connect(
-        host=DB["host"],
-        database=DB["name"],
-        user=DB["user"],
-        password=DB["pass"],
+        host=DB["hostname"],
+        database=DB["dbname"],
+        user=DB["username"],
+        password=DB["password"],
         port=DB["port"],
     ) as conn:
         try:
@@ -71,10 +64,10 @@ def get_table_value(table, column):
 
 def get_table_relationship(table):
     with psycopg2.connect(
-        host=DB["host"],
-        database=DB["name"],
-        user=DB["user"],
-        password=DB["pass"],
+        host=DB["hostname"],
+        database=DB["dbname"],
+        user=DB["username"],
+        password=DB["password"],
         port=DB["port"],
     ) as conn:
         try:
@@ -103,10 +96,10 @@ def get_table_relationship(table):
 
 def get_shapetype(table: str, col: str):
     with psycopg2.connect(
-        host=DB["host"],
-        database=DB["name"],
-        user=DB["user"],
-        password=DB["pass"],
+        host=DB["hostname"],
+        database=DB["dbname"],
+        user=DB["username"],
+        password=DB["password"],
         port=DB["port"],
     ) as conn:
         try:
@@ -130,10 +123,10 @@ def insert_sql(table: str, data):
         insert_data.append(row)
 
     with psycopg2.connect(
-        host=DB["host"],
-        database=DB["name"],
-        user=DB["user"],
-        password=DB["pass"],
+        host=DB["hostname"],
+        database=DB["dbname"],
+        user=DB["username"],
+        password=DB["password"],
         port=DB["port"],
     ) as conn:
         try:
@@ -149,10 +142,10 @@ def insert_sql(table: str, data):
 
 def run_command(query):
     with psycopg2.connect(
-        host=DB["host"],
-        database=DB["name"],
-        user=DB["user"],
-        password=DB["pass"],
+        host=DB["hostname"],
+        database=DB["dbname"],
+        user=DB["username"],
+        password=DB["password"],
         port=DB["port"],
     ) as conn:
         try:

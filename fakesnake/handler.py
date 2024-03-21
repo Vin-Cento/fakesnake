@@ -116,3 +116,8 @@ def exec_handler(query: str):
         print("empty")
     else:
         execute_cmd(query)
+
+
+@click.command("init")
+def init_handler():
+    init_db()

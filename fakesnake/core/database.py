@@ -8,8 +8,7 @@ from .creation import (
     create_points,
     create_ints,
     create_numbers,
-    # create_floats,
-)  # , get_table_value
+)
 
 from rich.console import Console
 from rich.table import Table
@@ -23,33 +22,45 @@ from ..utils.database import (
     get_shapetype,
     run_command,
 )
-from os import listdir
+from os import listdir, path
+import click
+import platform
 
 
-def init():
-    if ".env" in listdir():
-        print(".env exist")
+def init_db():
+    if platform.system() == "Linux":
+        folder = f"{path.expanduser('~')}/.config/fakesnake"
+        if ".env" in listdir(folder):
+            print(".env exist")
+        else:
+            hostname = click.prompt("Enter hostname", type=str)
+            username = click.prompt("Enter username", type=str)
+            password = click.prompt("Enter password", type=str)
+            port = click.prompt("Enter port", type=int)
+            dbname = click.prompt("Enter dbname", type=str)
+            dbtype = click.prompt("Enter dbtype", type=click.Choice(["postgres"]))
+            with open(f"{folder}/.env", "w") as file:
+                file.writelines(
+                    [
+                        f"username={username}\n",
+                        f"hostname={hostname}\n",
+                        f"dbname={dbname}\n",
+                        f"password={password}\n",
+                        f"port={port}\n",
+                        f"dbtype={dbtype}\n",
+                    ]
+                )
+            print(".env created")
     else:
-        with open(".env", "w") as file:
-            file.writelines(
-                [
-                    "port=\n",
-                    "name=\n",
-                    "host=\n",
-                    "pass=\n",
-                    "user=\n",
-                    "type=\n",
-                ]
-            )
-        print(".env created")
+        print("this only works on Linux at the moment")
 
 
 def show_table(table: str):
     with psycopg2.connect(
-        host=DB["host"],
-        database=DB["name"],
-        user=DB["user"],
-        password=DB["pass"],
+        host=DB["hostname"],
+        database=DB["dbname"],
+        user=DB["username"],
+        password=DB["password"],
         port=DB["port"],
     ) as conn:
         # Create a cursor object to execute SQL queries
@@ -79,10 +90,10 @@ def show_table(table: str):
 
 def show_tables():
     with psycopg2.connect(
-        host=DB["host"],
-        database=DB["name"],
-        user=DB["user"],
-        password=DB["pass"],
+        host=DB["hostname"],
+        database=DB["dbname"],
+        user=DB["username"],
+        password=DB["password"],
         port=DB["port"],
     ) as conn:
         # Create a cursor object to execute SQL queries
