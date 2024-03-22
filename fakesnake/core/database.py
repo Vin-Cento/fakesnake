@@ -1,4 +1,6 @@
 import psycopg2
+from sqlalchemy import text
+from sqlalchemy.orm import Session
 
 from .creation import (
     create_texts,
@@ -239,5 +241,12 @@ def describe_table(table: str):
         console.print(t)
 
 
-def execute_cmd(query: str):
-    run_command(query)
+def execute_cmd(query: str, session: Session):
+    if query.lower().startswith("select"):
+        res = session.execute(text(query))
+        for r in res:
+            print(r)
+    else:
+        session.execute(text(query))
+        session.commit()
+    session.close()

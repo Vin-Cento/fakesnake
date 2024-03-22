@@ -1,5 +1,8 @@
 import click
+from sqlalchemy import create_engine
 from .handler import *
+from sqlalchemy.orm import Session, sessionmaker
+from .utils.database import DB
 
 
 @click.group()
@@ -14,9 +17,15 @@ def generate():
 
 
 @cli.group("db")
-def database():
+@click.pass_context
+def database(ctx):
     """subcommand for database interaction"""
-    pass
+    ctx.obj = {}
+    engine = create_engine(
+        f"postgresql://{DB['username']}:{DB['password']}@{DB['hostname']}:{DB['port']}/{DB['dbname']}"
+    )
+    Session = sessionmaker(bind=engine)
+    ctx.obj["session"] = Session()
 
 
 generate.add_command(shape_handler)
@@ -35,6 +44,8 @@ database.add_command(show_table_handler)
 database.add_command(show_tables_handler)
 database.add_command(exec_handler)
 database.add_command(init_handler)
+
+# database.add_command(example_handler)
 
 
 def main():

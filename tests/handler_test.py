@@ -1,6 +1,7 @@
 from click.testing import CliRunner
 from fakesnake.handler import *
 import json
+from fakesnake.main import database
 
 
 def test_shape_handler():
@@ -97,7 +98,20 @@ def test_describe_table():
 
 def test_exec():
     runner = CliRunner()
-    result = runner.invoke(exec_handler, ["select * from users"])
-    result2 = runner.invoke(exec_handler, ["truncate users"])
+    result = runner.invoke(database, ["exec", "select * from users"])
+    print(result.output)
     assert result.exit_code == 0
-    assert result2.exit_code == 0
+
+
+def test_exec_fail():
+    runner = CliRunner()
+    result = runner.invoke(database, ["exec", "select * from error"])
+    print(result.output)
+    assert result.exit_code == 1
+
+
+def test_exec_truncate():
+    runner = CliRunner()
+    result = runner.invoke(database, ["exec", "truncate table users"])
+    print(result.output)
+    assert result.exit_code == 0

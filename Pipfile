@@ -15,6 +15,7 @@ pyproj = "*"
 click = "*"
 faker = "*"
 rich = "*"
+sqlalchemy = "*"
 
 [dev-packages]
 neovim = "*"

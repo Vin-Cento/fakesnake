@@ -1,4 +1,6 @@
 import click
+from sqlalchemy import text
+from sqlalchemy.orm import Session
 
 from .core.creation import *
 from .core.database import *
@@ -110,12 +112,14 @@ def config_handler():
 
 @click.command("exec")
 @click.argument("query", type=str)
-def exec_handler(query: str):
+@click.pass_context
+def exec_handler(ctx, query: str):
     """execute a sql command"""
+    print(query)
     if query == None:
         print("empty")
     else:
-        execute_cmd(query)
+        execute_cmd(query, ctx.obj["session"])
 
 
 @click.command("init")
