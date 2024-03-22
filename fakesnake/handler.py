@@ -77,9 +77,10 @@ def text_handler(num, max, header):
 
 @click.command("table")
 @click.argument("table")
-def show_table_handler(table: str):
+@click.pass_context
+def show_table_handler(ctx, table: str):
     """show all columns the table"""
-    show_table(table)
+    show_table(table, ctx.obj["session"])
 
 
 @click.command("tables")
@@ -90,17 +91,19 @@ def show_tables_handler():
 
 @click.command("describe")
 @click.argument("table")
-def describe_table_handler(table: str):
+@click.pass_context
+def describe_table_handler(ctx, table: str):
     """describe the current database"""
-    describe_table(table)
+    describe_table(table, ctx.obj["session"])
 
 
 @click.command("insert")
 @click.argument("table")
 @click.option("--num", "-n", type=int, default=10)
-def table_insert(table: str, num: int):
+@click.pass_context
+def insert_table_handler(ctx, table: str, num: int):
     """insert random data into table"""
-    insert_table(table, num)
+    insert_table(table, num, ctx.obj["session"])
 
 
 @click.command("config")

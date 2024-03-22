@@ -22,7 +22,6 @@ from ..utils.database import (
     get_table_value,
     insert_sql,
     get_shapetype,
-    run_command,
 )
 from os import listdir, path
 import click
@@ -57,7 +56,7 @@ def init_db():
         print("this only works on Linux at the moment")
 
 
-def show_table(table: str):
+def show_table(table: str, session: Session):
     with psycopg2.connect(
         host=DB["hostname"],
         database=DB["dbname"],
@@ -69,7 +68,7 @@ def show_table(table: str):
         try:
             with conn.cursor() as cursor:
                 t = Table(title=f"Table: {table}")
-                description = get_table_description(table)
+                description = get_table_description(table, session)
                 for i in description:  # type: ignore
                     t.add_column(i[0], justify="right", style="cyan")
 
@@ -111,8 +110,8 @@ def show_tables():
             print("Query was canceled:", e)
 
 
-def insert_table(table: str, num: int) -> None:
-    description = get_table_description(table)
+def insert_table(table: str, num: int, session: Session) -> None:
+    description = get_table_description(table, session)
     relation = get_table_relationship(table)
     special_rules = defaultdict(lambda: None)
     # read in special rules
@@ -205,17 +204,18 @@ def insert_table(table: str, num: int) -> None:
         else:
             continue
 
-    insert_sql(table, data)
+    insert_sql(table, data, session)
 
 
-def describe_table(table: str):
+def describe_table(table: str, session: Session):
     t = Table(title=f"Table: {table}")
     t.add_column("column", justify="right", style="cyan", no_wrap=True)
     t.add_column("datatype", style="magenta")
     t.add_column("char_limit", style="magenta")
     t.add_column("default", justify="right", style="green")
 
-    results = get_table_description(table)
+    print("description of table", table)
+    results = get_table_description(table, session)
     if results is None:
         print("Table not found")
         return

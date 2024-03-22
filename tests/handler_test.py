@@ -72,28 +72,28 @@ def test_db_shows_handler():
 
 def test_insert_table():
     runner = CliRunner()
-    result = runner.invoke(table_insert, ["users", "-n", "10"])
+    result = runner.invoke(database, ["insert", "users", "-n", "10"])
     assert result.exit_code == 0
 
 
 def test_show_table_handler():
     runner = CliRunner()
-    result = runner.invoke(show_table_handler, ["users"])
+    result = runner.invoke(database, ["table", "users"])
     print(result.output)
     assert result.exit_code == 0
 
 
 def test_show_tables_handler():
     runner = CliRunner()
-    result = runner.invoke(show_tables_handler)
+    result = runner.invoke(database, ["tables"])
     assert result.exit_code == 0
 
 
 def test_describe_table():
     runner = CliRunner()
-    result = runner.invoke(describe_table_handler, ["users"])
-    assert result.exit_code == 0
+    result = runner.invoke(database, ["describe", "users"])
     print(result.output)
+    assert result.exit_code == 0
 
 
 def test_exec():
