@@ -4,6 +4,8 @@ from os import listdir, path
 import platform
 
 from dotenv import dotenv_values
+from sqlalchemy import text
+from sqlalchemy.orm import Session
 
 
 DB = dict()
@@ -18,14 +20,7 @@ if platform.system() == "Linux":
         print(
             f"""
         Missing .env
-        Create file {folder}/.env
-
-        Example:
-        DB["port"] = "5432"
-        DB["name"] = "postgres"
-        DB["host"] = "localhost"
-        DB["pass"] = ""
-        DB["user"] = "postgres"
+        Run: fakes db init
         """
         )
 else:
@@ -33,30 +28,17 @@ else:
     exit()
 
 
-def get_table_description(table):
-    with psycopg2.connect(
-        host=DB["host"],
-        database=DB["name"],
-        user=DB["user"],
-        password=DB["pass"],
-        port=DB["port"],
-    ) as conn:
-        try:
-            with conn.cursor() as cursor:
-                query = f"SELECT column_name, udt_name, character_maximum_length, column_default FROM information_schema.columns WHERE table_name = '{table}';"
-                cursor.execute(query)
-                results = cursor.fetchall()
-                return results
-        except psycopg2.errors.QueryCanceled as e:
-            print("Query was canceled:", e)
+def get_table_description(table, session: Session):
+    query = f"SELECT column_name, udt_name, character_maximum_length, column_default FROM information_schema.columns WHERE table_name = '{table}';"
+    return session.execute(text(query))
 
 
 def get_table_value(table, column):
     with psycopg2.connect(
-        host=DB["host"],
-        database=DB["name"],
-        user=DB["user"],
-        password=DB["pass"],
+        host=DB["hostname"],
+        database=DB["dbname"],
+        user=DB["username"],
+        password=DB["password"],
         port=DB["port"],
     ) as conn:
         try:
@@ -71,10 +53,10 @@ def get_table_value(table, column):
 
 def get_table_relationship(table):
     with psycopg2.connect(
-        host=DB["host"],
-        database=DB["name"],
-        user=DB["user"],
-        password=DB["pass"],
+        host=DB["hostname"],
+        database=DB["dbname"],
+        user=DB["username"],
+        password=DB["password"],
         port=DB["port"],
     ) as conn:
         try:
@@ -103,10 +85,10 @@ def get_table_relationship(table):
 
 def get_shapetype(table: str, col: str):
     with psycopg2.connect(
-        host=DB["host"],
-        database=DB["name"],
-        user=DB["user"],
-        password=DB["pass"],
+        host=DB["hostname"],
+        database=DB["dbname"],
+        user=DB["username"],
+        password=DB["password"],
         port=DB["port"],
     ) as conn:
         try:
@@ -120,50 +102,19 @@ def get_shapetype(table: str, col: str):
             print("Query was canceled:", e)
 
 
-def insert_sql(table: str, data):
+def insert_sql(table: str, data, session: Session):
     insert_data = []
     columns = list(data.keys())
     for i in range(len(data[columns[0]])):  # type: ignore
-        row = ()
+        row = {}
         for key in data.keys():
-            row += (data[key][i],)
+            row[key] = data[key][i]
         insert_data.append(row)
 
-    with psycopg2.connect(
-        host=DB["host"],
-        database=DB["name"],
-        user=DB["user"],
-        password=DB["pass"],
-        port=DB["port"],
-    ) as conn:
-        try:
-            with conn.cursor() as cursor:
-                string_col = [f'"{c}"' for c in columns]
-                query = f"INSERT INTO {table} ({','.join(string_col)}) VALUES ({','.join(['%s' for _ in columns])});"
+    string_col = [f'"{c}"' for c in columns]
+    query = f"INSERT INTO {table} ({','.join(string_col)}) VALUES ({','.join([f':{col}' for col in columns])});"
+    print(query)
 
-                cursor.executemany(query, insert_data)
-                conn.commit()
-        except psycopg2.errors.QueryCanceled as e:
-            print("Query was canceled:", e)
-
-
-def run_command(query):
-    with psycopg2.connect(
-        host=DB["host"],
-        database=DB["name"],
-        user=DB["user"],
-        password=DB["pass"],
-        port=DB["port"],
-    ) as conn:
-        try:
-            with conn.cursor() as cursor:
-                cursor.execute(query)
-
-                if query.lower().startswith("select"):
-                    results = cursor.fetchall()
-                    for row in results:
-                        print(row)
-                else:
-                    conn.commit()
-        except psycopg2.errors.QueryCanceled as e:
-            print("Query was canceled:", e)
+    session.execute(text(query), insert_data)
+    session.commit()
+    session.close()

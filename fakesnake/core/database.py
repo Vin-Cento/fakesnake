@@ -1,4 +1,6 @@
 import psycopg2
+from sqlalchemy import text
+from sqlalchemy.orm import Session
 
 from .creation import (
     create_texts,
@@ -8,8 +10,7 @@ from .creation import (
     create_points,
     create_ints,
     create_numbers,
-    # create_floats,
-)  # , get_table_value
+)
 
 from rich.console import Console
 from rich.table import Table
@@ -21,42 +22,53 @@ from ..utils.database import (
     get_table_value,
     insert_sql,
     get_shapetype,
-    run_command,
 )
-from os import listdir
+from os import listdir, path
+import click
+import platform
 
 
-def init():
-    if ".env" in listdir():
-        print(".env exist")
+def init_db():
+    if platform.system() == "Linux":
+        folder = f"{path.expanduser('~')}/.config/fakesnake"
+        if ".env" in listdir(folder):
+            print(".env exist")
+        else:
+            hostname = click.prompt("Enter hostname", type=str)
+            username = click.prompt("Enter username", type=str)
+            password = click.prompt("Enter password", type=str)
+            port = click.prompt("Enter port", type=int)
+            dbname = click.prompt("Enter dbname", type=str)
+            dbtype = click.prompt("Enter dbtype", type=click.Choice(["postgres"]))
+            with open(f"{folder}/.env", "w") as file:
+                file.writelines(
+                    [
+                        f"username={username}\n",
+                        f"hostname={hostname}\n",
+                        f"dbname={dbname}\n",
+                        f"password={password}\n",
+                        f"port={port}\n",
+                        f"dbtype={dbtype}\n",
+                    ]
+                )
+            print(".env created")
     else:
-        with open(".env", "w") as file:
-            file.writelines(
-                [
-                    "port=\n",
-                    "name=\n",
-                    "host=\n",
-                    "pass=\n",
-                    "user=\n",
-                    "type=\n",
-                ]
-            )
-        print(".env created")
+        print("this only works on Linux at the moment")
 
 
-def show_table(table: str):
+def show_table(table: str, session: Session):
     with psycopg2.connect(
-        host=DB["host"],
-        database=DB["name"],
-        user=DB["user"],
-        password=DB["pass"],
+        host=DB["hostname"],
+        database=DB["dbname"],
+        user=DB["username"],
+        password=DB["password"],
         port=DB["port"],
     ) as conn:
         # Create a cursor object to execute SQL queries
         try:
             with conn.cursor() as cursor:
                 t = Table(title=f"Table: {table}")
-                description = get_table_description(table)
+                description = get_table_description(table, session)
                 for i in description:  # type: ignore
                     t.add_column(i[0], justify="right", style="cyan")
 
@@ -79,10 +91,10 @@ def show_table(table: str):
 
 def show_tables():
     with psycopg2.connect(
-        host=DB["host"],
-        database=DB["name"],
-        user=DB["user"],
-        password=DB["pass"],
+        host=DB["hostname"],
+        database=DB["dbname"],
+        user=DB["username"],
+        password=DB["password"],
         port=DB["port"],
     ) as conn:
         # Create a cursor object to execute SQL queries
@@ -98,8 +110,8 @@ def show_tables():
             print("Query was canceled:", e)
 
 
-def insert_table(table: str, num: int) -> None:
-    description = get_table_description(table)
+def insert_table(table: str, num: int, session: Session) -> None:
+    description = get_table_description(table, session)
     relation = get_table_relationship(table)
     special_rules = defaultdict(lambda: None)
     # read in special rules
@@ -192,17 +204,18 @@ def insert_table(table: str, num: int) -> None:
         else:
             continue
 
-    insert_sql(table, data)
+    insert_sql(table, data, session)
 
 
-def describe_table(table: str):
+def describe_table(table: str, session: Session):
     t = Table(title=f"Table: {table}")
     t.add_column("column", justify="right", style="cyan", no_wrap=True)
     t.add_column("datatype", style="magenta")
     t.add_column("char_limit", style="magenta")
     t.add_column("default", justify="right", style="green")
 
-    results = get_table_description(table)
+    print("description of table", table)
+    results = get_table_description(table, session)
     if results is None:
         print("Table not found")
         return
@@ -228,5 +241,12 @@ def describe_table(table: str):
         console.print(t)
 
 
-def execute_cmd(query: str):
-    run_command(query)
+def execute_cmd(query: str, session: Session):
+    if query.lower().startswith("select"):
+        res = session.execute(text(query))
+        for r in res:
+            print(r)
+    else:
+        session.execute(text(query))
+        session.commit()
+    session.close()

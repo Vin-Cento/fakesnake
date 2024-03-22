@@ -1,4 +1,6 @@
 import click
+from sqlalchemy import text
+from sqlalchemy.orm import Session
 
 from .core.creation import *
 from .core.database import *
@@ -75,9 +77,10 @@ def text_handler(num, max, header):
 
 @click.command("table")
 @click.argument("table")
-def show_table_handler(table: str):
+@click.pass_context
+def show_table_handler(ctx, table: str):
     """show all columns the table"""
-    show_table(table)
+    show_table(table, ctx.obj["session"])
 
 
 @click.command("tables")
@@ -88,17 +91,19 @@ def show_tables_handler():
 
 @click.command("describe")
 @click.argument("table")
-def describe_table_handler(table: str):
+@click.pass_context
+def describe_table_handler(ctx, table: str):
     """describe the current database"""
-    describe_table(table)
+    describe_table(table, ctx.obj["session"])
 
 
 @click.command("insert")
 @click.argument("table")
 @click.option("--num", "-n", type=int, default=10)
-def table_insert(table: str, num: int):
+@click.pass_context
+def insert_table_handler(ctx, table: str, num: int):
     """insert random data into table"""
-    insert_table(table, num)
+    insert_table(table, num, ctx.obj["session"])
 
 
 @click.command("config")
@@ -110,9 +115,16 @@ def config_handler():
 
 @click.command("exec")
 @click.argument("query", type=str)
-def exec_handler(query: str):
+@click.pass_context
+def exec_handler(ctx, query: str):
     """execute a sql command"""
+    print(query)
     if query == None:
         print("empty")
     else:
-        execute_cmd(query)
+        execute_cmd(query, ctx.obj["session"])
+
+
+@click.command("init")
+def init_handler():
+    init_db()
