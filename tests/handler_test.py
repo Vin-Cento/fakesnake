@@ -1,7 +1,7 @@
 from click.testing import CliRunner
 from fakesnake.handler import *
-import json
 from fakesnake.main import database
+import json
 
 
 def test_shape_handler():
