@@ -2,7 +2,6 @@ import click
 from sqlalchemy import create_engine
 from .handler import *
 from sqlalchemy.orm import sessionmaker
-from .utils.database import DB
 
 
 @click.group()
@@ -20,12 +19,37 @@ def generate():
 @click.pass_context
 def database(ctx):
     """subcommand for database interaction"""
+    from os import listdir, path
+    import platform
+
+    from dotenv import dotenv_values
+
+    DB = dict()
+    if platform.system() == "Linux":
+        folder = f"{path.expanduser('~')}/.config/fakesnake"
+        if ".env" in listdir(folder):
+            v = dotenv_values(f"{folder}/.env")
+
+            for e in v.keys():
+                DB[e] = v[e]
+        else:
+            print(
+                f"""
+            Missing .env
+            Run: fakes db init
+            """
+            )
+    else:
+        print("only available on linux")
+        exit()
+
     ctx.obj = {}
     engine = create_engine(
         f"postgresql://{DB['username']}:{DB['password']}@{DB['hostname']}:{DB['port']}/{DB['dbname']}"
     )
     Session = sessionmaker(bind=engine)
     ctx.obj["session"] = Session()
+    ctx.obj["DB"] = DB
 
 
 generate.add_command(shape_handler)

@@ -65,7 +65,7 @@ def test_text_handler():
 
 def test_db_shows_handler():
     runner = CliRunner()
-    result = runner.invoke(config_handler)
+    result = runner.invoke(database, ["config"])
     assert result.exit_code == 0
     assert len(result.output.splitlines()) > 0
 
