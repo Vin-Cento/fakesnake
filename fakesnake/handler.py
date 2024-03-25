@@ -73,11 +73,11 @@ def text_handler(num, max, header):
     print("\n".join(create_texts(num, max, header)))
 
 
-# TODO: add option to show whole row or limit to 10
 @click.command("table")
 @click.argument("table")
+@click.option("string_limit", "--string_limit", "-s", type=int, default=24)
 @click.pass_context
-def show_table_handler(ctx, table: str):
+def show_table_handler(ctx, table: str, string_limit: int):
     """show all columns the table"""
     # get columns
     description = get_table_description(table, ctx.obj["session"])
@@ -93,15 +93,14 @@ def show_table_handler(ctx, table: str):
 
     for row in results:
         for i, r in enumerate(row):
-            # TODO: add option to show whole row or limit to 10
             if i == columns_total - 1:
                 if type(r) == str:
-                    click.echo(f"{r[:10]}")
+                    click.echo(f"{r[:string_limit]}")
                 else:
                     click.echo(f"{r}")  # type: ignore
             else:
                 if type(r) == str:
-                    click.echo(f"{r[:10]},", nl=False)
+                    click.echo(f"{r[:string_limit]},", nl=False)
                 else:
                     click.echo(f"{r},", nl=False)  # type: ignore
 
