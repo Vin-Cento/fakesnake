@@ -6,9 +6,23 @@ from numpy import random
 from random import randint
 from typing import List
 from geojson import Feature, FeatureCollection, dumps
-from shapely.geometry import mapping
 
-from ..utils.util import create_square
+from geopy import Point
+from geopy.distance import distance
+from shapely.geometry import Polygon, mapping
+
+
+def create_square(lat, lon, edge_length):
+    center = Point(lat, lon)
+    north = distance(miles=edge_length).destination(center, 45)
+    east = distance(miles=edge_length).destination(center, 135)
+    south = distance(miles=edge_length).destination(center, 225)
+    west = distance(miles=edge_length).destination(center, 315)
+
+    square_points = [north, east, south, west]
+    polygon = Polygon([(p.longitude, p.latitude) for p in square_points])
+
+    return polygon
 
 
 def create_shapes(num, dist, header=None) -> List[str]:

@@ -1,6 +1,4 @@
 import click
-from sqlalchemy import text
-from sqlalchemy.orm import Session
 
 from .core.creation import *
 from .core.database import *
@@ -84,9 +82,10 @@ def show_table_handler(ctx, table: str):
 
 
 @click.command("tables")
-def show_tables_handler():
+@click.pass_context
+def show_tables_handler(ctx):
     """show all tables the database"""
-    show_tables()
+    show_tables(ctx.obj["session"])
 
 
 @click.command("describe")
@@ -107,8 +106,10 @@ def insert_table_handler(ctx, table: str, num: int):
 
 
 @click.command("config")
-def config_handler():
+@click.pass_context
+def config_handler(ctx):
     """show the database config"""
+    DB = ctx.obj["DB"]
     for key in DB:
         print(f"{key}:", DB[key])
 

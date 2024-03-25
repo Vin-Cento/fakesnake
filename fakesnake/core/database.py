@@ -1,4 +1,3 @@
-import psycopg2
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 
@@ -15,17 +14,69 @@ from .creation import (
 from rich.console import Console
 from rich.table import Table
 from collections import defaultdict
-from ..utils.database import (
-    DB,
-    get_table_description,
-    get_table_relationship,
-    get_table_value,
-    insert_sql,
-    get_shapetype,
-)
 from os import listdir, path
 import click
 import platform
+
+
+def get_table_description(table, session: Session):
+    query = f"SELECT column_name, udt_name, character_maximum_length, column_default FROM information_schema.columns WHERE table_name = '{table}';"
+    results = session.execute(text(query))
+    session.close()
+    return results
+
+
+def get_table_value(table, column, session: Session):
+    query = f'SELECT {column} FROM "{table}";'
+    results = session.execute(text(query))
+    session.close()
+    return results
+
+
+def get_table_relationship(table, session: Session):
+    query = f"""
+            SELECT
+                tc.table_name,
+                kcu.column_name,
+                ccu.table_name AS foreign_table_name,
+                ccu.column_name AS foreign_column_name
+            FROM
+                information_schema.table_constraints AS tc
+                JOIN information_schema.key_column_usage AS kcu
+                    ON tc.constraint_name = kcu.constraint_name
+                JOIN information_schema.constraint_column_usage AS ccu
+                    ON ccu.constraint_name = tc.constraint_name
+            WHERE constraint_type = 'FOREIGN KEY' AND tc.table_name ='{table}'
+            GROUP BY tc.table_name, kcu.column_name, foreign_table_name, foreign_column_name;
+        """
+    results = session.execute(text(query))
+    session.close()
+    return results
+
+
+def get_shapetype(table: str, col: str, session: Session):
+    query = f"SELECT type FROM geometry_columns WHERE f_table_name = '{table}' and f_geometry_column = '{col}';"
+    result = session.execute(text(query))
+    session.close()
+    return result[0]  # type: ignore
+
+
+def insert_sql(table: str, data, session: Session):
+    insert_data = []
+    columns = list(data.keys())
+    for i in range(len(data[columns[0]])):  # type: ignore
+        row = {}
+        for key in data.keys():
+            row[key] = data[key][i]
+        insert_data.append(row)
+
+    string_col = [f'"{c}"' for c in columns]
+    query = f"INSERT INTO {table} ({','.join(string_col)}) VALUES ({','.join([f':{col}' for col in columns])});"
+    print(query)
+
+    session.execute(text(query), insert_data)
+    session.commit()
+    session.close()
 
 
 def init_db():
@@ -57,62 +108,39 @@ def init_db():
 
 
 def show_table(table: str, session: Session):
-    with psycopg2.connect(
-        host=DB["hostname"],
-        database=DB["dbname"],
-        user=DB["username"],
-        password=DB["password"],
-        port=DB["port"],
-    ) as conn:
-        # Create a cursor object to execute SQL queries
+    t = Table(title=f"Table: {table}")
+    description = get_table_description(table, session)
+    for i in description:  # type: ignore
+        t.add_column(i[0], justify="right", style="cyan")
+
+    results = session.execute(text(f"SELECT * FROM {table} LIMIT 10;"))
+    session.close()
+    for row in results:
         try:
-            with conn.cursor() as cursor:
-                t = Table(title=f"Table: {table}")
-                description = get_table_description(table, session)
-                for i in description:  # type: ignore
-                    t.add_column(i[0], justify="right", style="cyan")
-
-                cursor.execute(f"SELECT * FROM {table} LIMIT 10;")
-                results = cursor.fetchall()
-                for row in results:
-                    try:
-                        t.add_row(*row)  # type: ignore
-                    except:
-                        new_row = ()
-                        for r in row:
-                            new_row += (str(r),)
-                        t.add_row(*new_row)
-                console = Console()
-                console.print(t)
-
-        except psycopg2.errors.QueryCanceled as e:
-            print("Query was canceled:", e)
+            t.add_row(*row)  # type: ignore
+        except:
+            new_row = ()
+            for r in row:
+                new_row += (str(r),)
+            t.add_row(*new_row)
+    console = Console()
+    console.print(t)
 
 
-def show_tables():
-    with psycopg2.connect(
-        host=DB["hostname"],
-        database=DB["dbname"],
-        user=DB["username"],
-        password=DB["password"],
-        port=DB["port"],
-    ) as conn:
-        # Create a cursor object to execute SQL queries
-        try:
-            with conn.cursor() as cursor:
-                cursor.execute(
-                    "SELECT table_name FROM information_schema.tables WHERE table_schema='public' and table_type='BASE TABLE';"
-                )
-                results = cursor.fetchall()
-                for row in results:
-                    print(row[0])
-        except psycopg2.errors.QueryCanceled as e:
-            print("Query was canceled:", e)
+def show_tables(session: Session):
+    results = session.execute(
+        text(
+            "SELECT table_name FROM information_schema.tables WHERE table_schema='public' and table_type='BASE TABLE';"
+        )
+    )
+    session.close()
+    for row in results:
+        print(row[0])
 
 
 def insert_table(table: str, num: int, session: Session) -> None:
     description = get_table_description(table, session)
-    relation = get_table_relationship(table)
+    relation = get_table_relationship(table, session)
     special_rules = defaultdict(lambda: None)
     # read in special rules
     for _, mainCol, foreignTable, foreignCol in relation:  # type: ignore
@@ -125,24 +153,24 @@ def insert_table(table: str, num: int, session: Session) -> None:
         col_names.append(col_name)
         if default is None:  # type: ignore
             if special_rules[col_name]:
-                res = get_table_value(special_rules[col_name][0], special_rules[col_name][1].replace(",", ""))  # type: ignore
+                res = get_table_value(special_rules[col_name][0], special_rules[col_name][1].replace(",", ""), session)  # type: ignore
                 # randonmly sample values from the foreign table of size 10
                 if res == None:
                     raise ValueError(
                         f"Foreign table {special_rules[col_name][0]} not found"  # type: ignore
                     )
 
-                if len(res) == 0:
+                if len(res) == 0:  # type: ignore
                     raise ValueError(
                         f"Foreign table {special_rules[col_name][0]} is empty"  # type: ignore
                     )
-                data[col_name] = [res[i % len(res)][0] for i in range(num)]
+                data[col_name] = [res[i % len(res)][0] for i in range(num)]  # type: ignore
             else:
                 if dtype == "uuid":
                     data[col_name] = create_uuid(num)
 
                 if dtype == "geometry":
-                    shp_type = get_shapetype(table, col_name)
+                    shp_type = get_shapetype(table, col_name, session)
                     if shp_type[0] == "POINT":  # type: ignore
                         data[col_name] = create_points(num)
                     else:
@@ -230,7 +258,7 @@ def describe_table(table: str, session: Session):
     t.add_column("column", style="green")
     t.add_column("foreign_table", justify="right", style="cyan", no_wrap=True)
     t.add_column("foreign_column", justify="right", style="green")
-    results = get_table_relationship(table)
+    results = get_table_relationship(table, session)
 
     if results is None:
         print("Table not found")
