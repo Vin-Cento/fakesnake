@@ -73,19 +73,48 @@ def text_handler(num, max, header):
     print("\n".join(create_texts(num, max, header)))
 
 
+# TODO: add option to show whole row or limit to 10
 @click.command("table")
 @click.argument("table")
 @click.pass_context
 def show_table_handler(ctx, table: str):
     """show all columns the table"""
-    show_table(table, ctx.obj["session"])
+    # get columns
+    description = get_table_description(table, ctx.obj["session"])
+    columns_total = len(description)
+    for i, r in enumerate(description):  # type: ignore
+        # i[0] is column
+        if i == columns_total - 1:
+            click.echo(r[0])
+        else:
+            click.echo(f"{r[0]},", nl=False)
+
+    results = get_table(table, ctx.obj["session"])
+
+    for row in results:
+        for i, r in enumerate(row):
+            # TODO: add option to show whole row or limit to 10
+            if i == columns_total - 1:
+                if type(r) == str:
+                    click.echo(f"{r[:10]}")
+                else:
+                    click.echo(f"{r}")  # type: ignore
+            else:
+                if type(r) == str:
+                    click.echo(f"{r[:10]},", nl=False)
+                else:
+                    click.echo(f"{r},", nl=False)  # type: ignore
 
 
 @click.command("tables")
 @click.pass_context
 def show_tables_handler(ctx):
     """show all tables the database"""
-    show_tables(ctx.obj["session"])
+    results = list_tables(ctx.obj["session"])
+
+    click.echo(click.style(f"Tables: Total {len(results)}", fg="green"))
+    for row in results:
+        click.echo(click.style(f"{row[0]}"))
 
 
 @click.command("describe")
