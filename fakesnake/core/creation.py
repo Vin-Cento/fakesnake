@@ -88,7 +88,7 @@ def create_emails(num, header=None) -> List[str]:
     fake = Faker()
     emails = [header] if header else []
     for _ in range(num):
-        emails.append(f"'{fake.email()}'")
+        emails.append(f"{fake.email()}")
     return emails
 
 
