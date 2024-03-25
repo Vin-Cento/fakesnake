@@ -93,7 +93,36 @@ def show_tables_handler(ctx):
 @click.pass_context
 def describe_table_handler(ctx, table: str):
     """describe the current database"""
-    describe_table(table, ctx.obj["session"])
+    results = get_table_description(table, ctx.obj["session"])
+    if results == []:
+        click.echo(click.style("Table not found", fg="red"))
+    else:
+        click.echo(click.style(f"Table: {table}\n", fg="green"))
+        click.echo(click.style(f"column,", fg="blue"), nl=False)
+        click.echo(click.style(f"datatype,", fg="magenta"), nl=False)
+        click.echo(click.style(f"char_limit,", fg="red"), nl=False)
+        click.echo(click.style(f"default", fg="green"))
+
+        for row in results:
+            click.echo(click.style(f"{row[0]},", fg="blue"), nl=False)
+            click.echo(click.style(f"{row[1]},", fg="magenta"), nl=False)
+            click.echo(click.style(f"{row[2]},", fg="red"), nl=False)
+            click.echo(click.style(f"{row[3]}", fg="green"))
+
+        results = get_table_relationship(table, ctx.obj["session"])
+        if results == []:
+            click.echo(click.style("\nNo Relationship found", fg="magenta"))
+        else:
+            click.echo(click.style(f"\nTable: {table}", fg="green"))
+            click.echo(click.style(f"column,", fg="blue"), nl=False)
+            click.echo(click.style(f"datatype,", fg="magenta"), nl=False)
+            click.echo(click.style(f"char_limit,", fg="red"), nl=False)
+            click.echo(click.style(f"default", fg="green"))
+            for row in results:
+                click.echo(click.style(f"{row[0]},", fg="blue"), nl=False)
+                click.echo(click.style(f"{row[1]},", fg="magenta"), nl=False)
+                click.echo(click.style(f"{row[2]},", fg="red"), nl=False)
+                click.echo(click.style(f"{row[3]}", fg="green"))
 
 
 @click.command("insert")

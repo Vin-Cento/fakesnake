@@ -21,7 +21,7 @@ import platform
 
 def get_table_description(table, session: Session):
     query = f"SELECT column_name, udt_name, character_maximum_length, column_default FROM information_schema.columns WHERE table_name = '{table}';"
-    results = session.execute(text(query))
+    results = session.execute(text(query)).fetchall()
     session.close()
     return results
 
@@ -49,7 +49,7 @@ def get_table_relationship(table, session: Session):
             WHERE constraint_type = 'FOREIGN KEY' AND tc.table_name ='{table}'
             GROUP BY tc.table_name, kcu.column_name, foreign_table_name, foreign_column_name;
         """
-    results = session.execute(text(query))
+    results = session.execute(text(query)).fetchall()
     session.close()
     return results
 
@@ -233,40 +233,6 @@ def insert_table(table: str, num: int, session: Session) -> None:
             continue
 
     insert_sql(table, data, session)
-
-
-def describe_table(table: str, session: Session):
-    t = Table(title=f"Table: {table}")
-    t.add_column("column", justify="right", style="cyan", no_wrap=True)
-    t.add_column("datatype", style="magenta")
-    t.add_column("char_limit", style="magenta")
-    t.add_column("default", justify="right", style="green")
-
-    print("description of table", table)
-    results = get_table_description(table, session)
-    if results is None:
-        print("Table not found")
-        return
-    for row in results:
-        t.add_row(str(row[0]), str(row[1]), str(row[2]), str(row[3]))  # type: ignore
-
-    console = Console()
-    console.print(t)
-
-    t = Table(title=f"Relationship")
-    t.add_column("table", justify="right", style="cyan", no_wrap=True)
-    t.add_column("column", style="green")
-    t.add_column("foreign_table", justify="right", style="cyan", no_wrap=True)
-    t.add_column("foreign_column", justify="right", style="green")
-    results = get_table_relationship(table, session)
-
-    if results is None:
-        print("Table not found")
-    else:
-        for row in results:
-            t.add_row(str(row[0]), str(row[1]), str(row[2]), str(row[3]))  # type: ignore
-        console = Console()
-        console.print(t)
 
 
 def execute_cmd(query: str, session: Session):
