@@ -1,5 +1,7 @@
 import click
 
+from fakesnake.utils.utils import print_column, print_row
+
 from .core.creation import *
 from .core.database import *
 
@@ -79,30 +81,15 @@ def text_handler(num, max, header):
 @click.pass_context
 def show_table_handler(ctx, table: str, string_limit: int):
     """show all columns the table"""
-    # get columns
     description = get_table_description(table, ctx.obj["session"])
-    columns_total = len(description)
-    for i, r in enumerate(description):  # type: ignore
-        # i[0] is column
-        if i == columns_total - 1:
-            click.echo(r[0])
-        else:
-            click.echo(f"{r[0]},", nl=False)
+    print_column([d[0] for d in description])
 
     results = get_table(table, ctx.obj["session"])
 
-    for row in results:
-        for i, r in enumerate(row):
-            if i == columns_total - 1:
-                if type(r) == str:
-                    click.echo(f"{r[:string_limit]}")
-                else:
-                    click.echo(f"{r}")  # type: ignore
-            else:
-                if type(r) == str:
-                    click.echo(f"{r[:string_limit]},", nl=False)
-                else:
-                    click.echo(f"{r},", nl=False)  # type: ignore
+    if results == []:
+        click.echo("EMPTY")
+    else:
+        print_row(results, string_limit)
 
 
 @click.command("tables")
@@ -112,8 +99,7 @@ def show_tables_handler(ctx):
     results = list_tables(ctx.obj["session"])
 
     click.echo(click.style(f"Tables: Total {len(results)}", fg="green"))
-    for row in results:
-        click.echo(click.style(f"{row[0]}"))
+    print_row(results)
 
 
 @click.command("describe")
@@ -121,6 +107,7 @@ def show_tables_handler(ctx):
 @click.pass_context
 def describe_table_handler(ctx, table: str):
     """describe the current database"""
+    color_theme = ["blue", "magenta", "red", "green"]
     results = get_table_description(table, ctx.obj["session"])
     if results == []:
         click.echo(click.style("Table not found", fg="red"))
@@ -130,12 +117,7 @@ def describe_table_handler(ctx, table: str):
         click.echo(click.style(f"datatype,", fg="magenta"), nl=False)
         click.echo(click.style(f"char_limit,", fg="red"), nl=False)
         click.echo(click.style(f"default", fg="green"))
-
-        for row in results:
-            click.echo(click.style(f"{row[0]},", fg="blue"), nl=False)
-            click.echo(click.style(f"{row[1]},", fg="magenta"), nl=False)
-            click.echo(click.style(f"{row[2]},", fg="red"), nl=False)
-            click.echo(click.style(f"{row[3]}", fg="green"))
+        print_row(results, 100, color_theme)
 
         results = get_table_relationship(table, ctx.obj["session"])
         if results == []:
@@ -146,11 +128,7 @@ def describe_table_handler(ctx, table: str):
             click.echo(click.style(f"datatype,", fg="magenta"), nl=False)
             click.echo(click.style(f"char_limit,", fg="red"), nl=False)
             click.echo(click.style(f"default", fg="green"))
-            for row in results:
-                click.echo(click.style(f"{row[0]},", fg="blue"), nl=False)
-                click.echo(click.style(f"{row[1]},", fg="magenta"), nl=False)
-                click.echo(click.style(f"{row[2]},", fg="red"), nl=False)
-                click.echo(click.style(f"{row[3]}", fg="green"))
+            print_row(results, 100, color_theme)
 
 
 @click.command("insert")

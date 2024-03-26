@@ -19,7 +19,7 @@ def generate():
 @click.pass_context
 def database(ctx):
     """subcommand for database interaction"""
-    from .utils.environment import utils_getDB
+    from .utils.utils import utils_getDB
 
     DB = utils_getDB()
     ctx.obj = {}

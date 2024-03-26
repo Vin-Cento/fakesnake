@@ -93,6 +93,7 @@ def init_db():
         if ".env" in listdir(folder):
             print(".env exist")
         else:
+            # TODO: move print logic to handler
             hostname = click.prompt("Enter hostname", type=str)
             username = click.prompt("Enter username", type=str)
             password = click.prompt("Enter password", type=str)
@@ -142,6 +143,7 @@ def insert_table(table: str, num: int, session: Session) -> None:
     data = dict()
 
     col_names = []
+    # TODO: abstract the examination of the datamodel (refactor: Hard)
     for col_name, dtype, charlimit, default in description:  # type: ignore
         col_names.append(col_name)
         if default is None:  # type: ignore
@@ -235,6 +237,7 @@ def insert_table(table: str, num: int, session: Session) -> None:
 
 
 def execute_cmd(query: str, session: Session):
+    # TODO: move print logic to handler
     if query.lower().startswith("select"):
         res = session.execute(text(query))
         for r in res:
