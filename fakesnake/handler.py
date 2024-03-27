@@ -10,9 +10,10 @@ from .core.database import *
 @click.option("--num", "-n", type=int, default=10)
 @click.option("--dist", "-d", type=float, default=1)
 @click.option("--header", "-h", type=str, default=None)
-def shape_handler(num, dist, header):
+@click.option("--srid", "-s", type=int, default=4326)
+def shape_handler(num, dist, header, srid):
     """generate a list of shape"""
-    print("\n".join(create_shapes(num, dist, header)))
+    print("\n".join(create_shapes(num, dist, header, srid)))
 
 
 @click.command("geojson")

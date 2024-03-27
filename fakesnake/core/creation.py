@@ -31,7 +31,7 @@ def create_shapes(num, dist, header=None, srid=4326) -> List[str]:
     polygons = [header] if header else []
     for _ in range(num):
         # Generate random latitude and longitude
-        lat, lon = fake.latlng()
+        lat, lon, _, _, _ = fake.local_latlng()
         square_polygon = create_square(lat, lon, dist)
         poly = square_polygon.__str__().replace("\n", "")
         polygons.append(f"SRID={srid};{poly}")
