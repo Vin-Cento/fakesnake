@@ -1,5 +1,7 @@
 import click
 
+from fakesnake.utils.utils import print_column, print_row
+
 from .core.creation import *
 from .core.database import *
 
@@ -75,17 +77,29 @@ def text_handler(num, max, header):
 
 @click.command("table")
 @click.argument("table")
+@click.option("string_limit", "--string_limit", "-s", type=int, default=24)
 @click.pass_context
-def show_table_handler(ctx, table: str):
+def show_table_handler(ctx, table: str, string_limit: int):
     """show all columns the table"""
-    show_table(table, ctx.obj["session"])
+    description = get_table_description(table, ctx.obj["session"])
+    print_column([d[0] for d in description])
+
+    results = get_table(table, ctx.obj["session"])
+
+    if results == []:
+        click.echo("EMPTY")
+    else:
+        print_row(results, string_limit)
 
 
 @click.command("tables")
 @click.pass_context
 def show_tables_handler(ctx):
     """show all tables the database"""
-    show_tables(ctx.obj["session"])
+    results = list_tables(ctx.obj["session"])
+
+    click.echo(click.style(f"Tables: Total {len(results)}", fg="green"))
+    print_row(results)
 
 
 @click.command("describe")
@@ -93,7 +107,25 @@ def show_tables_handler(ctx):
 @click.pass_context
 def describe_table_handler(ctx, table: str):
     """describe the current database"""
-    describe_table(table, ctx.obj["session"])
+    color_theme = ["blue", "magenta", "red", "green"]
+    results = get_table_description(table, ctx.obj["session"])
+    if results == []:
+        click.echo(click.style("Table not found", fg="red"))
+    else:
+        click.echo(click.style(f"Table: {table}\n", fg="green"))
+        print_column(["column", "datatype", "char_limit", "default"], 100, color_theme)
+        print_row(results, 100, color_theme)
+
+        results = get_table_relationship(table, ctx.obj["session"])
+        if results == []:
+            click.echo(click.style("\nNo Relationship found", fg="magenta"))
+        else:
+            for res in results:
+                click.echo(click.style(f"\nRelationship Table: {res[2]}\n", fg="green"))
+                print_column(
+                    ["column", "datatype", "char_limit", "default"], 100, color_theme
+                )
+                print_column(res, 100, color_theme)
 
 
 @click.command("insert")
