@@ -12,8 +12,6 @@ from .creation import (
     create_numbers,
 )
 
-from rich.console import Console
-from rich.table import Table
 from collections import defaultdict
 from os import listdir, path
 import click
@@ -36,7 +34,7 @@ def get_table_description(table, session: Session):
 
 def get_table_value(table, column, session: Session):
     query = f'SELECT {column} FROM "{table}";'
-    results = session.execute(text(query))
+    results = session.execute(text(query)).fetchall()
     session.close()
     return results
 
@@ -93,7 +91,6 @@ def init_db():
         if ".env" in listdir(folder):
             print(".env exist")
         else:
-            # TODO: move print logic to handler
             hostname = click.prompt("Enter hostname", type=str)
             username = click.prompt("Enter username", type=str)
             password = click.prompt("Enter password", type=str)
@@ -237,7 +234,6 @@ def insert_table(table: str, num: int, session: Session) -> None:
 
 
 def execute_cmd(query: str, session: Session):
-    # TODO: move print logic to handler
     if query.lower().startswith("select"):
         res = session.execute(text(query))
         for r in res:
