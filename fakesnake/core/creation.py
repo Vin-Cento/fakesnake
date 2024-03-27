@@ -25,7 +25,7 @@ def create_square(lat, lon, edge_length):
     return polygon
 
 
-def create_shapes(num, dist, header=None) -> List[str]:
+def create_shapes(num, dist, header=None, srid=4326) -> List[str]:
     fake = Faker()
     fake.add_provider(geo)
     polygons = [header] if header else []
@@ -33,18 +33,18 @@ def create_shapes(num, dist, header=None) -> List[str]:
         # Generate random latitude and longitude
         lat, lon = fake.latlng()
         square_polygon = create_square(lat, lon, dist)
-        polygons.append(square_polygon.__str__().replace("\n", ""))
+        poly = square_polygon.__str__().replace("\n", "")
+        polygons.append(f"SRID={srid};{poly}")
     return polygons
 
 
-def create_points(num, header=None) -> List[str]:
+def create_points(num, header=None, srid=4326) -> List[str]:
     fake = Faker()
     fake.add_provider(geo)
     points = [header] if header else []
     for _ in range(num):
         lat, lon = fake.latlng()
-        # TODO: automate the srid
-        points.append(f"SRID=4326;Point({lat} {lon})")
+        points.append(f"SRID={srid};Point({lat} {lon})")
     return points
 
 
