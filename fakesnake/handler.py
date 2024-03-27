@@ -113,10 +113,7 @@ def describe_table_handler(ctx, table: str):
         click.echo(click.style("Table not found", fg="red"))
     else:
         click.echo(click.style(f"Table: {table}\n", fg="green"))
-        click.echo(click.style(f"column,", fg="blue"), nl=False)
-        click.echo(click.style(f"datatype,", fg="magenta"), nl=False)
-        click.echo(click.style(f"char_limit,", fg="red"), nl=False)
-        click.echo(click.style(f"default", fg="green"))
+        print_column(["column", "datatype", "char_limit", "default"], 100, color_theme)
         print_row(results, 100, color_theme)
 
         results = get_table_relationship(table, ctx.obj["session"])
@@ -125,10 +122,9 @@ def describe_table_handler(ctx, table: str):
         else:
             for res in results:
                 click.echo(click.style(f"\nRelationship Table: {res[2]}\n", fg="green"))
-                click.echo(click.style(f"column,", fg="blue"), nl=False)
-                click.echo(click.style(f"datatype,", fg="magenta"), nl=False)
-                click.echo(click.style(f"char_limit,", fg="red"), nl=False)
-                click.echo(click.style(f"default", fg="green"))
+                print_column(
+                    ["column", "datatype", "char_limit", "default"], 100, color_theme
+                )
                 print_column(res, 100, color_theme)
 
 
