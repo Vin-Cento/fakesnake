@@ -22,11 +22,7 @@ def test_missing_table():
 
 def test_relationship_table():
     runner = CliRunner()
-    # create student table
-    runner.invoke(
-        database, ["exec", "create table student (id serial primary key, name text)"]
-    )
-    # create class table with foreign key to student
+    runner.invoke(database, ["exec", "create table student (id serial primary key, name text)"])
     runner.invoke(
         database,
         [
@@ -36,8 +32,10 @@ def test_relationship_table():
     )
     runner.invoke(database, ["insert", "student"])
     runner.invoke(database, ["insert", "class"])
-    result = runner.invoke(database, ["describe", "users"])
+    result = runner.invoke(database, ["describe", "student"])
+    result2 = runner.invoke(database, ["describe", "class"])
     print("")
     print(result.output)
-    assert result.output != "Table not found\n"
+    print(result2.output)
     assert result.exit_code == 0
+    assert result2.exit_code == 0

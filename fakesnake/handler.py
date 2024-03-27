@@ -123,12 +123,13 @@ def describe_table_handler(ctx, table: str):
         if results == []:
             click.echo(click.style("\nNo Relationship found", fg="magenta"))
         else:
-            click.echo(click.style(f"\nTable: {table}", fg="green"))
-            click.echo(click.style(f"column,", fg="blue"), nl=False)
-            click.echo(click.style(f"datatype,", fg="magenta"), nl=False)
-            click.echo(click.style(f"char_limit,", fg="red"), nl=False)
-            click.echo(click.style(f"default", fg="green"))
-            print_row(results, 100, color_theme)
+            for res in results:
+                click.echo(click.style(f"\nRelationship Table: {res[2]}\n", fg="green"))
+                click.echo(click.style(f"column,", fg="blue"), nl=False)
+                click.echo(click.style(f"datatype,", fg="magenta"), nl=False)
+                click.echo(click.style(f"char_limit,", fg="red"), nl=False)
+                click.echo(click.style(f"default", fg="green"))
+                print_column(res, 100, color_theme)
 
 
 @click.command("insert")
