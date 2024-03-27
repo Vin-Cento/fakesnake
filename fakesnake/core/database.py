@@ -113,8 +113,10 @@ def init_db():
         print("this only works on Linux at the moment")
 
 
-def get_table(table: str, session: Session, limit: int = 10):
-    results = session.execute(text(f"SELECT * FROM {table} LIMIT {limit};")).fetchall()
+def get_table(table: str, session: Session, limit: int = 10, order="*"):
+    results = session.execute(
+        text(f"SELECT {order} FROM {table} LIMIT {limit};")
+    ).fetchall()
     session.close()
     return results
 

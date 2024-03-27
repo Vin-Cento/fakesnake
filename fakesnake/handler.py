@@ -83,9 +83,10 @@ def text_handler(num, max, header):
 def show_table_handler(ctx, table: str, string_limit: int):
     """show all columns the table"""
     description = get_table_description(table, ctx.obj["session"])
-    print_column([d[0] for d in description])
+    order = [d[0] for d in description]
+    print_column(order)
 
-    results = get_table(table, ctx.obj["session"])
+    results = get_table(table, ctx.obj["session"], order=",".join(order))
 
     if results == []:
         click.echo("EMPTY")
